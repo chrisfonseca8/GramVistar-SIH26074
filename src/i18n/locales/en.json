@@ -1,0 +1,252 @@
+{
+  "common": {
+    "appName": "GramVistar",
+    "home": "Home",
+    "login": "Log in",
+    "launchPortal": "Launch Portal",
+    "logout": "Log out",
+    "loggedInAs": "Logged in as {{role}}",
+    "menu": "Menu",
+    "close": "Close",
+    "closeNav": "Close navigation menu",
+    "toggleNav": "Toggle navigation menu",
+    "loading": "Loading…",
+    "loadFailedTitle": "Failed to load local data",
+    "nothingToShow": "Nothing to show yet",
+    "somethingWrong": "Something went wrong"
+  },
+  "breadcrumb": {
+    "scientist": "Scientist / KVK",
+    "farmer": "Farmer",
+    "government": "Government",
+    "login": "Log in"
+  },
+  "nav": {
+    "scientist.blockOverview": "Block Overview",
+    "scientist.panchayatDeepDive": "Panchayat Deep Dive",
+    "scientist.modelDiagnostics": "Model Diagnostics",
+    "scientist.forecastVerification": "Forecast Verification",
+    "scientist.advisoryStudio": "Advisory Studio",
+    "scientist.feedbackInbox": "Feedback Inbox",
+    "farmer.today": "Today",
+    "farmer.feedback": "Feedback",
+    "government.overview": "Overview",
+    "government.climateOverview": "Climate Overview",
+    "government.riskMaps": "Risk Maps",
+    "government.operations": "Operations",
+    "government.disasterModules": "Disaster Management",
+    "government.reports": "Reports",
+    "government.alertEscalation": "Alert Escalation",
+    "government.drillMode": "Drill Mode",
+    "government.coordination": "Coordination"
+  },
+  "login": {
+    "title": "Log in",
+    "gatewayBadge": "Role-Based Access",
+    "heading": "Select Your Role",
+    "subtitle": "Mock login — no password or real identity is checked. Pick a role to simulate that user.",
+    "proceed": "Proceed",
+    "instantEntry": "Instant entry (Super Admin)",
+    "currentlyLoggedIn": "Currently logged in as {{role}}.",
+    "continue": "Continue",
+    "backHome": "Back to home",
+    "roles": {
+      "scientist": {
+        "title": "Scientist / KVK",
+        "subtitle": "Research & Advisory",
+        "description": "Analyze forecasts, verify models, and publish crop advisories."
+      },
+      "authorities": {
+        "title": "Authorities",
+        "subtitle": "DM/DC",
+        "description": "Monitor risk, coordinate disaster response, and track operations across panchayats."
+      },
+      "farmer": {
+        "title": "Farmer",
+        "subtitle": "Field Access",
+        "description": "View today's advisory, forecasts, and send feedback for your panchayat."
+      }
+    }
+  },
+  "farmer": {
+    "portalTitle": "Farmer",
+    "selectPanchayatTitle": "Select your panchayat",
+    "selectPanchayatDescription": "Pick your panchayat to see its latest published advisory.",
+    "noAdvisoryTitle": "No advisory published yet",
+    "noAdvisoryDescription": "Nothing has been published for {{panchayat}} yet — check back after the Scientist publishes one from the Advisory Studio.",
+    "todaysAdvisory": "Today's Advisory",
+    "published": "Published {{time}}",
+    "offlineCached": "Showing your last cached advisory — could not reach local data just now.",
+    "why": "Why",
+    "confidence": "Confidence: {{confidence}}",
+    "cropLabel": "Crop",
+    "cropStageLabel": "Crop stage",
+    "selectCrop": "Select crop",
+    "selectCropStage": "Select stage",
+    "actionCard": {
+      "title": "Today's Actions",
+      "irrigate": "Irrigate",
+      "spray": "Spray",
+      "fertilizer": "Fertilize",
+      "harvest": "Harvest",
+      "livestock": "Livestock",
+      "yes": "YES",
+      "no": "NO",
+      "unavailable": "Not enough data right now"
+    },
+    "forecast": {
+      "title": "5-Day Forecast",
+      "unavailable": "No forecast data available"
+    },
+    "alerts": {
+      "title": "Alerts",
+      "none": "No alerts right now"
+    },
+    "rainChance": {
+      "title": "Rain Chance Today",
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening",
+      "night": "Night"
+    },
+    "soilMoisture": {
+      "title": "Soil Moisture",
+      "description": "How dry your soil is right now. Green = fine, yellow = getting dry, red = needs water soon."
+    },
+    "operationsOutlook": {
+      "title": "This Week: Spray & Irrigation",
+      "spray": "Spray",
+      "irrigate": "Irrigate",
+      "frost": "Frost"
+    },
+    "cropOutlook": {
+      "title": "Temperature vs. {{crop}}",
+      "selectCropFirst": "Pick a crop above to see if the week's temperatures are safe for it.",
+      "hot": "Too hot",
+      "cold": "Too cold",
+      "safe": "Safe",
+      "unavailable": "No data"
+    },
+    "weather": {
+      "title": "Today's Weather",
+      "temperature": "Temperature",
+      "humidity": "Humidity",
+      "wind": "Wind",
+      "rainChance": "Rain chance"
+    },
+    "hourlyRain": {
+      "title": "Hourly Rain Probability",
+      "now": "Now"
+    },
+    "heatCold": {
+      "title": "Heat/Cold Stress",
+      "heatLabel": "Heat stress",
+      "frostLabel": "Frost risk",
+      "heatComfortable": "Comfortable",
+      "heatCaution": "Caution",
+      "heatDanger": "Danger",
+      "frostNone": "None",
+      "frostWatch": "Watch",
+      "frostWarning": "Warning"
+    },
+    "pestDisease": {
+      "title": "Pest/Disease Risk",
+      "disclaimer": "General estimate based on temperature and humidity only — not specific to any crop or pest.",
+      "low": "Low",
+      "moderate": "Moderate",
+      "high": "High"
+    },
+    "irrigationSchedule": {
+      "title": "Irrigation Schedule",
+      "water": "Water",
+      "skip": "Skip"
+    },
+    "feedback": {
+      "title": "Feedback",
+      "category": "What is this about?",
+      "categories": {
+        "cropStage": "Crop Stage",
+        "irrigation": "Irrigation",
+        "pest": "Pest",
+        "damage": "Damage",
+        "yield": "Yield"
+      },
+      "notes": "Additional notes (optional)",
+      "voiceNote": {
+        "label": "Voice note (optional)",
+        "record": "Record",
+        "reRecord": "Re-record",
+        "stop": "Stop",
+        "remove": "Remove",
+        "unsupported": "Voice recording isn't supported in this browser.",
+        "permissionDenied": "Microphone access was denied or unavailable."
+      },
+      "submit": "Submit feedback",
+      "submitAnother": "Submit another",
+      "confirmationTitle": "Feedback received",
+      "smsTab": "SMS preview",
+      "ivrTab": "IVR call preview",
+      "recentTitle": "Your recent feedback",
+      "recentNone": "No feedback submitted yet.",
+      "cropStage": {
+        "currentStage": "Current crop stage"
+      },
+      "irrigation": {
+        "irrigated": "Did you irrigate recently?",
+        "yes": "Yes",
+        "no": "No",
+        "method": "Irrigation method (optional)"
+      },
+      "pest": {
+        "observed": "Have you seen pests or disease?",
+        "pestType": "What pest or disease?",
+        "severity": "How severe?",
+        "severityLow": "Low",
+        "severityModerate": "Moderate",
+        "severityHigh": "High"
+      },
+      "damage": {
+        "type": "What caused the damage?",
+        "flood": "Flood",
+        "drought": "Drought",
+        "hail": "Hail",
+        "pestDamage": "Pest",
+        "other": "Other",
+        "areaAffected": "Approximate area affected (%)"
+      },
+      "yield": {
+        "expected": "Expected yield (quintals/acre)"
+      }
+    },
+    "preparedness": {
+      "title": "Preparedness Points",
+      "level": "Level: {{level}}",
+      "markPrepared": "Mark as prepared",
+      "done": "Prepared ✓"
+    },
+    "readAloud": {
+      "play": "Read aloud",
+      "stop": "Stop"
+    },
+    "rainfallReport": {
+      "title": "Report Today's Rainfall",
+      "description": "Help improve local forecasts — tell us how much it actually rained where you are.",
+      "amountLabel": "Rainfall (mm)",
+      "submit": "Submit report",
+      "thanks": "Thanks — your report was recorded.",
+      "reportAgain": "Report again"
+    },
+    "otp": {
+      "phoneLabel": "Mobile number",
+      "phonePlaceholder": "10-digit mobile number",
+      "sendCode": "Send OTP",
+      "codeSentTo": "A 6-digit code was sent to {{phone}} (simulated — any 6 digits work).",
+      "codeLabel": "Enter OTP",
+      "verify": "Verify & continue",
+      "invalidPhone": "Enter a mobile number to continue.",
+      "invalidCode": "Enter the 6-digit code.",
+      "changeNumber": "Change number",
+      "backToRoles": "Back"
+    }
+  }
+}

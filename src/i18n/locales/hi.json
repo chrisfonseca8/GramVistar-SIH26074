@@ -1,0 +1,252 @@
+{
+  "common": {
+    "appName": "ग्रामविस्तार",
+    "home": "मुख्य पृष्ठ",
+    "login": "लॉग इन करें",
+    "launchPortal": "पोर्टल शुरू करें",
+    "logout": "लॉग आउट करें",
+    "loggedInAs": "{{role}} के रूप में लॉग इन",
+    "menu": "मेनू",
+    "close": "बंद करें",
+    "closeNav": "नेविगेशन मेनू बंद करें",
+    "toggleNav": "नेविगेशन मेनू खोलें/बंद करें",
+    "loading": "लोड हो रहा है…",
+    "loadFailedTitle": "स्थानीय डेटा लोड नहीं हो सका",
+    "nothingToShow": "अभी दिखाने के लिए कुछ नहीं है",
+    "somethingWrong": "कुछ गड़बड़ हो गई"
+  },
+  "breadcrumb": {
+    "scientist": "वैज्ञानिक / केवीके",
+    "farmer": "किसान",
+    "government": "सरकार",
+    "login": "लॉग इन करें"
+  },
+  "nav": {
+    "scientist.blockOverview": "ब्लॉक अवलोकन",
+    "scientist.panchayatDeepDive": "पंचायत विस्तृत जानकारी",
+    "scientist.modelDiagnostics": "मॉडल निदान",
+    "scientist.forecastVerification": "पूर्वानुमान सत्यापन",
+    "scientist.advisoryStudio": "सलाह स्टूडियो",
+    "scientist.feedbackInbox": "प्रतिक्रिया इनबॉक्स",
+    "farmer.today": "आज",
+    "farmer.feedback": "प्रतिक्रिया",
+    "government.overview": "अवलोकन",
+    "government.climateOverview": "जलवायु अवलोकन",
+    "government.riskMaps": "जोखिम मानचित्र",
+    "government.operations": "संचालन",
+    "government.disasterModules": "आपदा प्रबंधन",
+    "government.reports": "रिपोर्ट",
+    "government.alertEscalation": "चेतावनी वृद्धि",
+    "government.drillMode": "अभ्यास मोड",
+    "government.coordination": "समन्वय"
+  },
+  "login": {
+    "title": "लॉग इन करें",
+    "gatewayBadge": "भूमिका-आधारित पहुंच",
+    "heading": "अपनी भूमिका चुनें",
+    "subtitle": "यह एक नकली लॉगिन है। कोई पासवर्ड या वास्तविक पहचान जांची नहीं जाती — उस उपयोगकर्ता का अनुकरण करने के लिए एक भूमिका चुनें।",
+    "proceed": "आगे बढ़ें",
+    "instantEntry": "त्वरित प्रवेश (सुपर एडमिन)",
+    "currentlyLoggedIn": "आप वर्तमान में {{role}} के रूप में लॉग इन हैं।",
+    "continue": "जारी रखें",
+    "backHome": "मुख्य पृष्ठ पर वापस जाएं",
+    "roles": {
+      "scientist": {
+        "title": "वैज्ञानिक / केवीके",
+        "subtitle": "अनुसंधान एवं सलाह",
+        "description": "पूर्वानुमानों का विश्लेषण करें, मॉडल सत्यापित करें, और फसल सलाह प्रकाशित करें।"
+      },
+      "authorities": {
+        "title": "प्राधिकरण",
+        "subtitle": "डीएम/डीसी",
+        "description": "जोखिम की निगरानी करें, आपदा प्रतिक्रिया समन्वित करें, और पंचायतों में संचालन ट्रैक करें।"
+      },
+      "farmer": {
+        "title": "किसान",
+        "subtitle": "क्षेत्र पहुंच",
+        "description": "आज की सलाह, पूर्वानुमान देखें, और अपनी पंचायत के लिए प्रतिक्रिया भेजें।"
+      }
+    }
+  },
+  "farmer": {
+    "portalTitle": "किसान",
+    "selectPanchayatTitle": "अपनी पंचायत चुनें",
+    "selectPanchayatDescription": "नवीनतम प्रकाशित सलाह देखने के लिए अपनी पंचायत चुनें।",
+    "noAdvisoryTitle": "अभी तक कोई सलाह प्रकाशित नहीं हुई",
+    "noAdvisoryDescription": "{{panchayat}} के लिए अभी तक कुछ भी प्रकाशित नहीं हुआ है — वैज्ञानिक द्वारा सलाह स्टूडियो से प्रकाशित करने के बाद दोबारा देखें।",
+    "todaysAdvisory": "आज की सलाह",
+    "published": "{{time}} को प्रकाशित",
+    "offlineCached": "आपकी अंतिम सहेजी गई सलाह दिखाई जा रही है — अभी स्थानीय डेटा तक नहीं पहुंचा जा सका।",
+    "why": "कारण",
+    "confidence": "विश्वास स्तर: {{confidence}}",
+    "cropLabel": "फसल",
+    "cropStageLabel": "फसल अवस्था",
+    "selectCrop": "फसल चुनें",
+    "selectCropStage": "अवस्था चुनें",
+    "actionCard": {
+      "title": "आज की कार्रवाई",
+      "irrigate": "सिंचाई करें",
+      "spray": "छिड़काव करें",
+      "fertilizer": "खाद डालें",
+      "harvest": "कटाई करें",
+      "livestock": "पशुधन",
+      "yes": "हाँ",
+      "no": "नहीं",
+      "unavailable": "अभी पर्याप्त डेटा उपलब्ध नहीं है"
+    },
+    "forecast": {
+      "title": "5-दिन का पूर्वानुमान",
+      "unavailable": "कोई पूर्वानुमान डेटा उपलब्ध नहीं है"
+    },
+    "alerts": {
+      "title": "चेतावनियां",
+      "none": "अभी कोई चेतावनी नहीं है"
+    },
+    "rainChance": {
+      "title": "आज बारिश की संभावना",
+      "morning": "सुबह",
+      "afternoon": "दोपहर",
+      "evening": "शाम",
+      "night": "रात"
+    },
+    "soilMoisture": {
+      "title": "मिट्टी की नमी",
+      "description": "अभी आपकी मिट्टी कितनी सूखी है। हरा = ठीक है, पीला = सूखने लगी है, लाल = जल्द पानी चाहिए।"
+    },
+    "operationsOutlook": {
+      "title": "इस सप्ताह: छिड़काव और सिंचाई",
+      "spray": "छिड़काव",
+      "irrigate": "सिंचाई",
+      "frost": "पाला"
+    },
+    "cropOutlook": {
+      "title": "तापमान बनाम {{crop}}",
+      "selectCropFirst": "यह देखने के लिए ऊपर फसल चुनें कि सप्ताह का तापमान उसके लिए सुरक्षित है या नहीं।",
+      "hot": "बहुत गर्म",
+      "cold": "बहुत ठंडा",
+      "safe": "सुरक्षित",
+      "unavailable": "डेटा नहीं"
+    },
+    "weather": {
+      "title": "आज का मौसम",
+      "temperature": "तापमान",
+      "humidity": "नमी",
+      "wind": "हवा",
+      "rainChance": "बारिश की संभावना"
+    },
+    "hourlyRain": {
+      "title": "प्रति घंटा बारिश की संभावना",
+      "now": "अभी"
+    },
+    "heatCold": {
+      "title": "गर्मी/ठंड तनाव",
+      "heatLabel": "गर्मी का तनाव",
+      "frostLabel": "पाला जोखिम",
+      "heatComfortable": "आरामदायक",
+      "heatCaution": "सावधानी",
+      "heatDanger": "खतरा",
+      "frostNone": "कोई नहीं",
+      "frostWatch": "निगरानी",
+      "frostWarning": "चेतावनी"
+    },
+    "pestDisease": {
+      "title": "कीट/रोग जोखिम",
+      "disclaimer": "केवल तापमान और नमी पर आधारित सामान्य अनुमान — किसी विशेष फसल या कीट के लिए नहीं।",
+      "low": "कम",
+      "moderate": "मध्यम",
+      "high": "अधिक"
+    },
+    "irrigationSchedule": {
+      "title": "सिंचाई अनुसूची",
+      "water": "पानी दें",
+      "skip": "छोड़ें"
+    },
+    "feedback": {
+      "title": "प्रतिक्रिया",
+      "category": "यह किस बारे में है?",
+      "categories": {
+        "cropStage": "फसल अवस्था",
+        "irrigation": "सिंचाई",
+        "pest": "कीट",
+        "damage": "नुकसान",
+        "yield": "उपज"
+      },
+      "notes": "अतिरिक्त टिप्पणी (वैकल्पिक)",
+      "voiceNote": {
+        "label": "आवाज़ संदेश (वैकल्पिक)",
+        "record": "रिकॉर्ड करें",
+        "reRecord": "फिर से रिकॉर्ड करें",
+        "stop": "रोकें",
+        "remove": "हटाएं",
+        "unsupported": "इस ब्राउज़र में आवाज़ रिकॉर्डिंग समर्थित नहीं है।",
+        "permissionDenied": "माइक्रोफ़ोन एक्सेस अस्वीकृत या अनुपलब्ध था।"
+      },
+      "submit": "प्रतिक्रिया भेजें",
+      "submitAnother": "एक और भेजें",
+      "confirmationTitle": "प्रतिक्रिया प्राप्त हुई",
+      "smsTab": "एसएमएस पूर्वावलोकन",
+      "ivrTab": "आईवीआर कॉल पूर्वावलोकन",
+      "recentTitle": "आपकी हाल की प्रतिक्रिया",
+      "recentNone": "अभी तक कोई प्रतिक्रिया नहीं भेजी गई है।",
+      "cropStage": {
+        "currentStage": "वर्तमान फसल अवस्था"
+      },
+      "irrigation": {
+        "irrigated": "क्या आपने हाल ही में सिंचाई की?",
+        "yes": "हाँ",
+        "no": "नहीं",
+        "method": "सिंचाई विधि (वैकल्पिक)"
+      },
+      "pest": {
+        "observed": "क्या आपने कीट या रोग देखा है?",
+        "pestType": "कौन सा कीट या रोग?",
+        "severity": "कितना गंभीर?",
+        "severityLow": "कम",
+        "severityModerate": "मध्यम",
+        "severityHigh": "अधिक"
+      },
+      "damage": {
+        "type": "नुकसान का कारण क्या था?",
+        "flood": "बाढ़",
+        "drought": "सूखा",
+        "hail": "ओलावृष्टि",
+        "pestDamage": "कीट",
+        "other": "अन्य",
+        "areaAffected": "अनुमानित प्रभावित क्षेत्र (%)"
+      },
+      "yield": {
+        "expected": "अपेक्षित उपज (क्विंटल/एकड़)"
+      }
+    },
+    "preparedness": {
+      "title": "तैयारी अंक",
+      "level": "स्तर: {{level}}",
+      "markPrepared": "तैयार के रूप में चिह्नित करें",
+      "done": "तैयार ✓"
+    },
+    "readAloud": {
+      "play": "ज़ोर से पढ़ें",
+      "stop": "रोकें"
+    },
+    "rainfallReport": {
+      "title": "आज की बारिश दर्ज करें",
+      "description": "स्थानीय पूर्वानुमान बेहतर बनाने में मदद करें — बताएं कि आपके यहां वास्तव में कितनी बारिश हुई।",
+      "amountLabel": "बारिश (मिमी)",
+      "submit": "रिपोर्ट भेजें",
+      "thanks": "धन्यवाद — आपकी रिपोर्ट दर्ज कर ली गई है।",
+      "reportAgain": "फिर से रिपोर्ट करें"
+    },
+    "otp": {
+      "phoneLabel": "मोबाइल नंबर",
+      "phonePlaceholder": "10 अंकों का मोबाइल नंबर",
+      "sendCode": "ओटीपी भेजें",
+      "codeSentTo": "{{phone}} पर 6 अंकों का कोड भेजा गया (नकली — कोई भी 6 अंक काम करेंगे)।",
+      "codeLabel": "ओटीपी दर्ज करें",
+      "verify": "सत्यापित करें और जारी रखें",
+      "invalidPhone": "जारी रखने के लिए मोबाइल नंबर दर्ज करें।",
+      "invalidCode": "6 अंकों का कोड दर्ज करें।",
+      "changeNumber": "नंबर बदलें",
+      "backToRoles": "वापस"
+    }
+  }
+}

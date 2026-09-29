@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Chosen Palette: Warm Emerald & Slate Grounded Palette (Emerald-600 #059669, Amber-500 #f59e0b, Slate-50 #f8fafc, Slate-900 #0f172a, Red-600 #dc2626) -->
+    <!-- Application Structure Plan: The SPA is structured as a role-based, multi-view decision support system catering to three distinct user archetypes: 1) KVK Agricultural Scientist (high-density analytical view with downscaled spatial Canvas maps, forecast threshold Chart.js charts, model validation scatter plots, and an advisory drafting module), 2) Farmer View (mobile-first layout with instant risk alerts, simple language translation toggle, actionable before/during/after checklists, and emergency helpline trigger), and 3) Governance Coordinator Portal (district-level choropleth risk map, priority Panchayat rankings, Kanban resource allocation, and broadcast wizard). A persistent top context bar allows instant role switching to demonstrate the entire data flow from downscaling to field action. -->
+    <!-- Visualization & Content Choices: 
+        1. Spatial Microclimate Downscaling (Scientist View) -> Goal: Prove low-res to high-res transition -> Method: Interactive HTML5 Canvas raster map with Block (10km) vs Panchayat (90m) resolution toggle -> Interaction: Hover tooltips with precise coordinates, click to filter all connected forecast charts and crop risk panels.
+        2. 7-Day Forecast Analysis -> Goal: Show weather trend against agronomic danger thresholds -> Method: Chart.js composed line/bar chart with threshold lines -> Interaction: Toggle crop thresholds (Paddy, Maize, Mustard) to update threshold lines and danger zones.
+        3. Model Validation (Predicted vs Observed) -> Goal: Establish scientific credibility -> Method: Chart.js scatter plot with 1:1 ideal reference line -> Interaction: Display RMSE, MAE, R² metrics.
+        4. District Risk Choropleth (Governance View) -> Goal: Identify high-risk administrative zones -> Method: Interactive HTML5 Canvas map of Ranchi Panchayats -> Interaction: Click polygon to filter Panchayat priority table and resource allocation panel.
+        5. Language Translation -> Goal: Accessibility (GIGW 3.0) -> Method: Dynamic JS object translation switching interface between English, Hindi, and Nagpuri.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krishi-Mausam | Agro-Meteorological Decision Support Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        risk: {
+                            safe: '#10b981',
+                            moderate: '#facc15',
+                            high: '#f97316',
+                            critical: '#dc2626'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 380px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 350px; }
+        }
+        .canvas-map {
+            width: 100%;
+            height: 380px;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+        /* Custom scrollbar for data tables */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+    <!-- GLOBAL HEADER & ROLE NAVIGATION BAR -->
+    <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Branding -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-xl text-white shadow-inner">
+                        🌾
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg tracking-wide text-white block leading-tight">Krishi-Mausam</span>
+                        <span class="text-xs text-emerald-400 font-medium">DAMU Decision Support System • Ranchi District</span>
+                    </div>
+                </div>
+
+                <!-- Role Switcher Tabs -->
+                <nav class="hidden md:flex bg-slate-800 p-1 rounded-lg border border-slate-700">
+                    <button onclick="switchRole('scientist')" id="tab-scientist" class="role-tab px-4 py-1.5 text-xs font-semibold rounded-md transition-all duration-150 bg-emerald-600 text-white shadow-sm">
+                        🔬 KVK Scientist View
+                    </button>
+                    <button onclick="switchRole('farmer')" id="tab-farmer" class="role-tab px-4 py-1.5 text-xs font-semibold rounded-md text-slate-300 hover:text-white transition-all duration-150">
+                        👨‍🌾 Farmer Mobile View
+                    </button>
+                    <button onclick="switchRole('governance')" id="tab-governance" class="role-tab px-4 py-1.5 text-xs font-semibold rounded-md text-slate-300 hover:text-white transition-all duration-150">
+                        🏛️ Governance & BDO Portal
+                    </button>
+                </nav>
+
+                <!-- Context Status Bar -->
+                <div class="flex items-center space-x-4 text-xs">
+                    <div class="hidden sm:flex items-center space-x-2 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-slate-300">Downscaling Engine: <strong class="text-white">Active (R²=0.92)</strong></span>
+                    </div>
+                    <div class="text-right hidden lg:block">
+                        <p class="font-semibold text-slate-200">Kharif Season 2026</p>
+                        <p class="text-slate-400 text-[10px]" id="live-clock">Sep 27, 2026 • 09:00 IST</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Role Switcher Bar -->
+            <div class="flex md:hidden border-t border-slate-800 py-2 justify-around text-xs">
+                <button onclick="switchRole('scientist')" id="mob-tab-scientist" class="role-tab px-2 py-1 font-semibold rounded text-emerald-400">Scientist</button>
+                <button onclick="switchRole('farmer')" id="mob-tab-farmer" class="role-tab px-2 py-1 text-slate-400">Farmer</button>
+                <button onclick="switchRole('governance')" id="mob-tab-governance" class="role-tab px-2 py-1 text-slate-400">Governance</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ========================================================================================= -->
+        <!-- VIEW 1: KVK / AGRICULTURAL SCIENTIST DASHBOARD -->
+        <!-- ========================================================================================= -->
+        <section id="view-scientist" class="space-y-6">
+            
+            <!-- Introductory Context Paragraph -->
+            <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-sm text-emerald-950 flex justify-between items-center shadow-sm">
+                <div>
+                    <h1 class="font-bold text-emerald-900 text-base">District Agro-Met Unit (DAMU) • KVK Ranchi</h1>
+                    <p class="mt-0.5 text-emerald-800">
+                        This analytical workspace allows agricultural scientists to validate high-resolution microclimate downscaling models (Block 10km → Panchayat 90m), analyze crop stress thresholds, and generate targeted Agromet Advisory Bulletins (AAB) for local farming communities.
+                    </p>
+                </div>
+                <div class="hidden md:block text-right">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300">
+                        📍 Jurisdiction: Ormanjhi & Kanke Blocks
+                    </span>
+                </div>
+            </div>
+
+            <!-- Top KPI Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- KPI 1 -->
+                <div onclick="filterScientistMap('alerts')" class="bg-white rounded-lg p-4 shadow-sm border border-slate-200 hover:border-red-300 transition-all cursor-pointer group">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Critical Alerts</span>
+                        <span class="p-2 rounded-lg bg-red-50 text-red-600 group-hover:bg-red-100">🚨</span>
+                    </div>
+                    <div class="mt-2 flex items-baseline justify-between">
+                        <span class="text-2xl font-bold text-slate-900">3 Panchayats</span>
+                        <span class="text-xs text-red-600 font-medium">Heavy Rain expected</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1">Ormanjhi, Chakla, Irba in 48h</p>
+                </div>
+
+                <!-- KPI 2 -->
+                <div onclick="scrollToSection('crop-risk-panel')" class="bg-white rounded-lg p-4 shadow-sm border border-slate-200 hover:border-orange-300 transition-all cursor-pointer group">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">High-Risk Crop Area</span>
+                        <span class="p-2 rounded-lg bg-orange-50 text-orange-600 group-hover:bg-orange-100">🌱</span>
+                    </div>
+                    <div class="mt-2 flex items-baseline justify-between">
+                        <span class="text-2xl font-bold text-slate-900">1,240 Ha</span>
+                        <span class="text-xs text-orange-600 font-medium">Paddy False Smut</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1">RH > 85% with continuous wet spells</p>
+                </div>
+
+                <!-- KPI 3 -->
+                <div class="bg-white rounded-lg p-4 shadow-sm border border-slate-200">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Advisory Coverage</span>
+                        <span class="p-2 rounded-lg bg-blue-50 text-blue-600">📱</span>
+                    </div>
+                    <div class="mt-2 flex items-baseline justify-between">
+                        <span class="text-2xl font-bold text-slate-900">14,500</span>
+                        <span class="text-xs text-emerald-600 font-medium">94% Delivered</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1">SMS, App & Gram Panchayat Bulletins</p>
+                </div>
+
+                <!-- KPI 4 -->
+                <div onclick="switchScientistTab('validation')" class="bg-white rounded-lg p-4 shadow-sm border border-slate-200 hover:border-emerald-300 transition-all cursor-pointer group">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Downscale R² Score</span>
+                        <span class="p-2 rounded-lg bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100">📈</span>
+                    </div>
+                    <div class="mt-2 flex items-baseline justify-between">
+                        <span class="text-2xl font-bold text-slate-900">0.92</span>
+                        <span class="text-xs text-emerald-600 font-medium">RMSE: 1.2°C</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1">Validated against local AWS sensors</p>
+                </div>
+            </div>
+
+            <!-- Spatial Analysis & Forecast Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left 8 Columns: Spatial Map & Time-Series Charts -->
+                <div class="lg:col-span-8 space-y-6">
+                    
+                    <!-- Spatial Microclimate Map Section -->
+                    <div class="bg-white rounded-lg p-5 shadow-sm border border-slate-200">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+                            <div>
+                                <h2 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                                    🗺️ Downscaled Microclimate Model
+                                    <span class="text-xs font-normal text-slate-500">(Interactive Canvas Raster)</span>
+                                </h2>
+                                <p class="text-xs text-slate-500">Compare coarse 10km GFS/ECMWF Block data against 90m topography-corrected downscaling.</p>
+                            </div>
+                            
+                            <!-- Resolution & Variable Controls -->
+                            <div class="flex items-center space-x-2">
+                                <select id="map-var-select" onchange="renderScientistMap()" class="text-xs bg-slate-50 border border-slate-300 rounded-md px-2 py-1 font-medium text-slate-700">
+                                    <option value="rain">Precipitation (mm)</option>
+                                    <option value="temp">Temperature (°C)</option>
+                                    <option value="humidity">Relative Humidity (%)</option>
+                                </select>
+                                
+                                <div class="bg-slate-100 p-0.5 rounded-md flex text-xs font-semibold">
+                                    <button onclick="toggleResolution('block')" id="res-block" class="px-2 py-1 rounded text-slate-600">Block (10km)</button>
+                                    <button onclick="toggleResolution('panchayat')" id="res-panchayat" class="px-2 py-1 rounded bg-emerald-600 text-white shadow-xs">Panchayat (90m)</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Canvas Map Boundary -->
+                        <div class="relative mt-3">
+                            <canvas id="scientistMapCanvas" class="canvas-map bg-slate-900"></canvas>
+                            
+                            <!-- Map Overlay Tooltip -->
+                            <div id="map-tooltip" class="absolute hidden bg-slate-900/95 text-white p-2.5 rounded shadow-lg text-xs pointer-events-none border border-slate-700 z-10 max-w-xs">
+                                <p class="font-bold text-emerald-400" id="tt-name">Chakla Panchayat</p>
+                                <p class="text-slate-300" id="tt-val">Forecast Rain: 48 mm</p>
+                                <p class="text-slate-400 text-[10px]" id="tt-coord">Lat: 23.36°N • Elev: 620m</p>
+                            </div>
+
+                            <!-- Map Legend -->
+                            <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-xs p-2 rounded border border-slate-200 text-[10px] space-y-1 shadow-sm">
+                                <p class="font-semibold text-slate-700" id="map-legend-title">Rain Intensity (mm)</p>
+                                <div class="flex items-center space-x-1">
+                                    <span class="w-3 h-3 bg-blue-100 inline-block rounded-xs"></span><span class="text-slate-600">< 5</span>
+                                    <span class="w-3 h-3 bg-blue-400 inline-block rounded-xs"></span><span class="text-slate-600">5-25</span>
+                                    <span class="w-3 h-3 bg-blue-700 inline-block rounded-xs"></span><span class="text-slate-600">25-50</span>
+                                    <span class="w-3 h-3 bg-fuchsia-600 inline-block rounded-xs"></span><span class="text-slate-600">> 50</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-right">
+                            <span class="text-xs text-emerald-700 font-medium">👉 Click any Panchayat on map to load localized microclimate forecast below.</span>
+                        </div>
+                    </div>
+
+                    <!-- Forecast & Validation Tabbed Section -->
+                    <div class="bg-white rounded-lg p-5 shadow-sm border border-slate-200">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <div class="flex space-x-4 text-xs font-bold">
+                                <button onclick="switchScientistTab('forecast')" id="tab-btn-forecast" class="text-emerald-600 border-b-2 border-emerald-600 pb-2">
+                                    📊 7-Day Downscaled Timeline & Danger Thresholds
+                                </button>
+                                <button onclick="switchScientistTab('validation')" id="tab-btn-validation" class="text-slate-500 hover:text-slate-800 pb-2">
+                                    🎯 Model Validation (Predicted vs. Observed AWS)
+                                </button>
+                            </div>
+                            <div class="text-xs text-slate-500">
+                                Target: <strong id="active-panchayat-label" class="text-slate-800">Chakla Panchayat (Ormanjhi)</strong>
+                            </div>
+                        </div>
+
+                        <!-- Tab 1: 7-Day Forecast Chart -->
+                        <div id="scientist-tab-forecast" class="mt-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-xs text-slate-600">Dynamic Agronomic Threshold Overlay for: 
+                                    <span class="font-semibold text-slate-800">Paddy (Booting / Panicle Initiation)</span>
+                                </p>
+                                <div class="flex items-center space-x-2 text-[11px]">
+                                    <span class="inline-block w-3 h-0.5 bg-red-500"></span>
+                                    <span class="text-slate-600">RH > 85% Disease Risk Line</span>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="scientistForecastChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: Predicted vs Observed Scatter Plot -->
+                        <div id="scientist-tab-validation" class="mt-4 hidden">
+                            <div class="flex items-center justify-between mb-2 text-xs">
+                                <p class="text-slate-600">AWS Station Comparison (Sep 2026 ground truth vs downscaled spatial model output)</p>
+                                <div class="flex space-x-3 text-slate-700 font-medium">
+                                    <span>R² = <strong>0.92</strong></span>
+                                    <span>RMSE = <strong>1.2°C</strong></span>
+                                    <span>MAE = <strong>0.85°C</strong></span>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="validationScatterChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right 4 Columns: Crop Risk Panel & Advisory Drafting -->
+                <div class="lg:col-span-4 space-y-6">
+                    
+                    <!-- Crop Risk Analysis Accordion -->
+                    <div id="crop-risk-panel" class="bg-white rounded-lg p-5 shadow-sm border border-slate-200">
+                        <h2 class="font-bold text-slate-900 text-sm flex items-center justify-between border-b border-slate-100 pb-3">
+                            <span>🌱 Crop Risk Analysis</span>
+                            <span class="text-xs font-normal text-slate-500">Chakla Panchayat</span>
+                        </h2>
+
+                        <div class="mt-3 space-y-3">
+                            <!-- Crop 1: Paddy -->
+                            <div class="border border-red-200 bg-red-50/50 rounded-md p-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-slate-900 text-xs">Rice / Paddy (Kharif)</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700">Critical Risk</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600 mt-1">Growth Stage: <strong>Panicle Initiation</strong></p>
+                                <div class="mt-2 text-[11px] space-y-1">
+                                    <div class="flex justify-between text-slate-700">
+                                        <span>False Smut Disease Risk:</span>
+                                        <span class="font-bold text-red-600">High (RH 88% + Rain)</span>
+                                    </div>
+                                    <div class="flex justify-between text-slate-700">
+                                        <span>Submergence Risk:</span>
+                                        <span class="font-bold text-orange-600">Moderate</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Crop 2: Maize -->
+                            <div class="border border-orange-200 bg-orange-50/50 rounded-md p-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-slate-900 text-xs">Maize / Corn</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-700">Moderate Risk</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600 mt-1">Growth Stage: <strong>Cob Formation</strong></p>
+                                <div class="mt-2 text-[11px] space-y-1">
+                                    <div class="flex justify-between text-slate-700">
+                                        <span>Wind Damage / Lodging:</span>
+                                        <span class="font-bold text-orange-600">22 km/h Gusts</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Crop 3: Mustard -->
+                            <div class="border border-emerald-200 bg-emerald-50/50 rounded-md p-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-slate-900 text-xs">Mustard (Early Sowing)</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">Optimal</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600 mt-1">Soil moisture is highly favorable for upcoming land preparation.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Advisory Generator Form -->
+                    <div class="bg-white rounded-lg p-5 shadow-sm border border-emerald-200 relative">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h2 class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                                📝 Agromet Advisory Generator
+                            </h2>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded">ICAR Protocol</span>
+                        </div>
+
+                        <form id="advisory-form" onsubmit="handlePublishAdvisory(event)" class="mt-3 space-y-3 text-xs">
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Target Panchayats:</label>
+                                <input type="text" id="adv-target" value="Chakla, Irba (Ormanjhi Block)" readonly class="w-full bg-slate-100 border border-slate-300 rounded p-1.5 font-medium text-slate-800">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">Target Crop:</label>
+                                    <select id="adv-crop" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 font-medium">
+                                        <option value="Paddy">Paddy (Rice)</option>
+                                        <option value="Maize">Maize</option>
+                                        <option value="Vegetables">Vegetables</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">Weather Event:</label>
+                                    <select id="adv-event" class="w-full bg-slate-50 border border-slate-300 rounded p-1.5 font-medium">
+                                        <option value="Heavy Rain">Heavy Rain & Humidity</option>
+                                        <option value="High Wind">High Winds</option>
+                                        <option value="Dry Spell">Dry Spell</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="font-semibold text-slate-700">English Advisory Instruction:</label>
+                                    <button type="button" onclick="autoSuggestAdvisory()" class="text-[10px] text-emerald-600 hover:underline">✨ Auto-Suggest</button>
+                                </div>
+                                <textarea id="adv-text-en" rows="3" class="w-full border border-slate-300 rounded p-2 focus:ring-1 focus:ring-emerald-500 font-sans text-slate-800">Maintain proper field drainage. Do not apply urea or chemical pesticide sprays during the next 48 hours due to high False Smut infection risk during continuous wet spells.</textarea>
+                            </div>
+
+                            <!-- Dual Translation Box (Hindi & Nagpuri) -->
+                            <div class="bg-slate-50 p-2.5 rounded border border-slate-200 space-y-2">
+                                <div class="flex justify-between items-center text-[10px] font-bold text-slate-600">
+                                    <span>GIGW Multilingual Translation Output:</span>
+                                    <span class="text-emerald-700">Auto-Synced</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-500 font-medium">Hindi (हिन्दी):</span>
+                                    <textarea id="adv-text-hi" rows="2" class="w-full border border-slate-200 rounded p-1.5 text-[11px] bg-white text-slate-800">खेत में जल निकासी की व्यवस्था बनाए रखें। कंडुआ/फॉल्स स्मट रोग के खतरे को देखते हुए अगले 48 घंटों तक यूरिया या कीटनाशक का छिड़काव न करें।</textarea>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-500 font-medium">Nagpuri Dialect (नागपुरी):</span>
+                                    <textarea id="adv-text-nag" rows="2" class="w-full border border-slate-200 rounded p-1.5 text-[11px] bg-white text-slate-800">खेत कर पानी निकलेक साधन ठीक राखू। फॉल्स स्मट बीमारी कर डर से आवइया 48 घंटा तक यूरिया चाहे कीटनाशक दवा नी छीकू।</textarea>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded shadow-xs transition-colors flex items-center justify-center gap-1.5">
+                                📢 Validate & Publish Advisory to Farmers
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Recent Published Advisories Log Table -->
+            <div class="bg-white rounded-lg p-5 shadow-sm border border-slate-200">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2">
+                    <h2 class="font-bold text-slate-900 text-base">📜 Issued Agromet Advisory Log</h2>
+                    <input type="text" id="advisory-search" onkeyup="searchAdvisories()" placeholder="Search Panchayat or Crop..." class="text-xs border border-slate-300 rounded-md px-3 py-1.5 w-full sm:w-64">
+                </div>
+                <div class="overflow-x-auto mt-3">
+                    <table class="w-full text-left text-xs text-slate-700" id="advisory-table">
+                        <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
+                            <tr>
+                                <th class="p-2.5">Date / Time</th>
+                                <th class="p-2.5">Target Panchayats</th>
+                                <th class="p-2.5">Crop</th>
+                                <th class="p-2.5">Weather Event</th>
+                                <th class="p-2.5">Severity</th>
+                                <th class="p-2.5">Farmer Reach</th>
+                                <th class="p-2.5 text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100" id="advisory-table-body">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================================================= -->
+        <!-- VIEW 2: FARMER MOBILE VIEW -->
+        <!-- ========================================================================================= -->
+        <section id="view-farmer" class="hidden space-y-6">
+            
+            <!-- Context Banner -->
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 text-xs text-amber-900 flex justify-between items-center shadow-sm">
+                <div>
+                    <strong>👨‍🌾 Farmer Interface Mode:</strong> Optimized for low cognitive load, localized language accessibility, and immediate actionability.
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-slate-600 font-semibold">Language:</span>
+                    <select id="farmer-lang-select" onchange="changeFarmerLanguage(this.value)" class="bg-white border border-amber-300 font-bold rounded px-2 py-1 text-slate-800">
+                        <option value="hi">हिन्दी (Hindi)</option>
+                        <option value="nag">नागपुरी (Nagpuri)</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Mobile Screen Device Frame -->
+            <div class="max-w-md mx-auto bg-slate-900 rounded-[2.5rem] p-4 shadow-2xl border-4 border-slate-800">
+                <!-- Phone Inner Screen Container -->
+                <div class="bg-slate-50 rounded-[2rem] overflow-hidden text-slate-900 min-h-[680px] flex flex-col justify-between border border-slate-200">
+                    
+                    <!-- Mobile Header Bar -->
+                    <div class="bg-emerald-700 text-white p-4 pt-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-xs text-emerald-200">Namaskar, Ram Singh Ji 🙏</p>
+                                <h2 class="text-lg font-bold flex items-center gap-1">
+                                    📍 Chakla, Ormanjhi
+                                </h2>
+                            </div>
+                            <button onclick="triggerHelplineCall()" class="bg-emerald-800 hover:bg-emerald-900 text-xs px-3 py-1.5 rounded-full border border-emerald-500 font-medium flex items-center gap-1">
+                                📞 KVK Helpline
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable Mobile Body -->
+                    <div class="p-4 space-y-4 flex-grow overflow-y-auto">
+
+                        <!-- CRITICAL ALERT CARD (Dynamically updated from Scientist view) -->
+                        <div id="farmer-critical-card" class="bg-red-600 text-white rounded-xl p-4 shadow-md animate-pulse">
+                            <div class="flex items-center justify-between">
+                                <span class="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider" id="f-alert-badge">
+                                    ⚠️ Critical Weather Alert
+                                </span>
+                                <span class="text-xs text-red-100 font-medium">Next 48 Hours</span>
+                            </div>
+                            <h3 class="font-extrabold text-base mt-2" id="f-alert-title">
+                                Heavy Rain & High Humidity Expected
+                            </h3>
+                            <p class="text-xs text-red-100 mt-1 font-medium" id="f-alert-crop">
+                                Affected Crop: Paddy (Rice)
+                            </p>
+                            <div class="bg-red-700/80 rounded-lg p-2.5 mt-2 text-xs border border-red-500" id="f-alert-body">
+                                "Do not apply fertilizer or spray pesticides today. Ensure drainage channel is clear."
+                            </div>
+                            <button onclick="acknowledgeAlert()" class="mt-3 w-full bg-white text-red-700 hover:bg-red-50 text-xs font-bold py-2 rounded-lg shadow-xs text-center">
+                                ✓ Acknowledge & Mark Read
+                            </button>
+                        </div>
+
+                        <!-- TODAY'S SIMPLE WEATHER WIDGET -->
+                        <div class="bg-white rounded-xl p-3.5 shadow-sm border border-slate-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs text-slate-500 font-medium" id="f-lbl-today">Today's Weather</p>
+                                    <p class="text-2xl font-bold text-slate-900">33°C</p>
+                                    <p class="text-xs text-slate-600">Rain Probability: <strong class="text-blue-600">85%</strong></p>
+                                </div>
+                                <div class="text-4xl">
+                                    ⛈️
+                                </div>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-center text-xs">
+                                <div class="bg-slate-50 p-1.5 rounded">
+                                    <span class="text-slate-500 block text-[10px]">Expected Rain</span>
+                                    <span class="font-bold text-slate-800">48 mm</span>
+                                </div>
+                                <div class="bg-slate-50 p-1.5 rounded">
+                                    <span class="text-slate-500 block text-[10px]">Soil Moisture</span>
+                                    <span class="font-bold text-emerald-600">Optimal (Wet)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CROP HEALTH STATUS CARDS -->
+                        <div>
+                            <p class="text-xs font-bold text-slate-700 mb-2" id="f-lbl-mycrops">My Selected Crops Health Status</p>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="bg-red-50 border border-red-200 p-2.5 rounded-lg">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-bold text-xs text-slate-800">Paddy</span>
+                                        <span class="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+                                    </div>
+                                    <span class="text-[10px] text-red-700 font-medium block mt-1">High Disease Risk</span>
+                                </div>
+                                <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-bold text-xs text-slate-800">Maize</span>
+                                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                                    </div>
+                                    <span class="text-[10px] text-emerald-700 font-medium block mt-1">Safe Condition</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ACTIONABLE CHECKLIST (What Should I Do?) -->
+                        <div class="bg-white rounded-xl p-3.5 shadow-sm border border-slate-200 space-y-2">
+                            <p class="text-xs font-bold text-slate-900 flex items-center justify-between">
+                                <span id="f-lbl-actions">What Should You Do Today?</span>
+                                <span class="text-[10px] text-emerald-700 font-normal">KVK Verified</span>
+                            </p>
+                            
+                            <div class="space-y-2 text-xs">
+                                <label class="flex items-start space-x-2 bg-slate-50 p-2 rounded border border-slate-200 cursor-pointer">
+                                    <input type="checkbox" class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-slate-800" id="chk-1">Inspect and clean field drainage outlets before 4 PM.</span>
+                                </label>
+                                <label class="flex items-start space-x-2 bg-slate-50 p-2 rounded border border-slate-200 cursor-pointer">
+                                    <input type="checkbox" class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-slate-800" id="chk-2">Postpone urea top-dressing application until rain stops.</span>
+                                </label>
+                                <label class="flex items-start space-x-2 bg-slate-50 p-2 rounded border border-slate-200 cursor-pointer">
+                                    <input type="checkbox" class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-slate-800" id="chk-3">Move harvested vegetables to elevated covered sheds.</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 7-DAY SIMPLE CAROUSEL -->
+                        <div>
+                            <p class="text-xs font-bold text-slate-700 mb-2" id="f-lbl-7day">7-Day Simple Forecast</p>
+                            <div class="flex space-x-2 overflow-x-auto pb-2 text-center text-xs">
+                                <div class="flex-none w-20 bg-red-50 border-2 border-red-400 p-2 rounded-lg">
+                                    <p class="font-bold text-slate-800">Mon</p>
+                                    <p class="text-lg my-1">⛈️</p>
+                                    <p class="font-bold text-red-600">33°C</p>
+                                    <p class="text-[9px] text-slate-500">85% Rain</p>
+                                </div>
+                                <div class="flex-none w-20 bg-orange-50 border border-orange-300 p-2 rounded-lg">
+                                    <p class="font-bold text-slate-800">Tue</p>
+                                    <p class="text-lg my-1">🌧️</p>
+                                    <p class="font-bold text-orange-600">31°C</p>
+                                    <p class="text-[9px] text-slate-500">60% Rain</p>
+                                </div>
+                                <div class="flex-none w-20 bg-white border border-slate-200 p-2 rounded-lg">
+                                    <p class="font-bold text-slate-800">Wed</p>
+                                    <p class="text-lg my-1">Partly Cloudy</p>
+                                    <p class="font-bold text-slate-800">34°C</p>
+                                    <p class="text-[9px] text-slate-500">20% Rain</p>
+                                </div>
+                                <div class="flex-none w-20 bg-white border border-slate-200 p-2 rounded-lg">
+                                    <p class="font-bold text-slate-800">Thu</p>
+                                    <p class="text-lg my-1">☀️</p>
+                                    <p class="font-bold text-slate-800">35°C</p>
+                                    <p class="text-[9px] text-slate-500">10% Rain</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Mobile Bottom Tab Navigation -->
+                    <div class="bg-white border-t border-slate-200 px-4 py-2 flex justify-around text-center text-[10px] font-semibold text-slate-600">
+                        <button class="text-emerald-600 flex flex-col items-center">
+                            <span class="text-base">🏠</span>
+                            <span id="f-nav-home">Home</span>
+                        </button>
+                        <button class="flex flex-col items-center hover:text-slate-900">
+                            <span class="text-base">🌧️</span>
+                            <span id="f-nav-forecast">Forecast</span>
+                        </button>
+                        <button class="flex flex-col items-center hover:text-slate-900">
+                            <span class="text-base">🌾</span>
+                            <span id="f-nav-crops">My Crops</span>
+                        </button>
+                        <button class="flex flex-col items-center hover:text-slate-900 relative">
+                            <span class="text-base">🔔</span>
+                            <span id="f-nav-alerts">Alerts</span>
+                            <span class="absolute top-0 right-2 w-2 h-2 rounded-full bg-red-600"></span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================================================= -->
+        <!-- VIEW 3: GOVERNANCE & RESOURCE COORDINATOR PORTAL -->
+        <!-- ========================================================================================= -->
+        <section id="view-governance" class="hidden space-y-6">
+            
+            <!-- Introductory Context -->
+            <div class="bg-slate-800 text-white rounded-lg p-4 text-sm flex justify-between items-center shadow-sm">
+                <div>
+                    <h1 class="font-bold text-base text-emerald-400">Ranchi District Disaster Management & Agricultural Governance</h1>
+                    <p class="text-xs text-slate-300 mt-0.5">
+                        Operational dashboard for Block Development Officers (BDOs) and Mukhiyas to aggregate spatial risk, coordinate emergency drainage equipment, and trigger regional mass broadcasts.
+                    </p>
+                </div>
+                <div class="hidden md:block">
+                    <button onclick="openBroadcastModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-2 rounded flex items-center gap-1">
+                        📢 Initiate Broadcast Wizard
+                    </button>
+                </div>
+            </div>
+
+            <!-- Governance KPIs -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                    <span class="text-xs font-semibold text-slate-500 uppercase">High Risk Panchayats</span>
+                    <div class="mt-2 flex justify-between items-baseline">
+                        <span class="text-2xl font-bold text-red-600">12 / 305</span>
+                        <span class="text-xs text-red-600 font-medium">Ormanjhi Block Peak</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1">Requires immediate drainage deployment</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Affected Farmers Count</span>
+                    <div class="mt-2 flex justify-between items-baseline">
+                        <span class="text-2xl font-bold text-slate-900">8,450</span>
+                        <span class="text-xs text-orange-600 font-medium">Kharif Paddy Belt</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1">Targeted for SMS advisory broadcast</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Active Critical Threats</span>
+                    <div class="mt-2 flex justify-between items-baseline">
+                        <span class="text-2xl font-bold text-slate-900">1 Event</span>
+                        <span class="text-xs text-red-600 font-medium">Flash Waterlogging</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1">48-hr heavy precipitation window</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Resource Mobilization</span>
+                    <div class="mt-2 flex justify-between items-baseline">
+                        <span class="text-2xl font-bold text-emerald-600">85% Ready</span>
+                        <span class="text-xs text-emerald-600 font-medium">Pumps & Shelters</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1">10 water pumps dispatched from Block HQ</p>
+                </div>
+            </div>
+
+            <!-- Spatial District Choropleth & Priority Ranking Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left 7 Columns: District Choropleth Map -->
+                <div class="lg:col-span-7 bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div>
+                            <h2 class="font-bold text-slate-900 text-sm">🗺️ Ranchi District Panchayat Risk Heatmap</h2>
+                            <p class="text-xs text-slate-500">Color-coded by aggregated crop vulnerability score from KVK advisory data.</p>
+                        </div>
+                        <div class="text-[10px] font-semibold flex items-center space-x-2">
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Safe</span>
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>Moderate</span>
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-600"></span>Critical</span>
+                        </div>
+                    </div>
+
+                    <div class="relative mt-3">
+                        <canvas id="governanceMapCanvas" class="canvas-map bg-slate-950"></canvas>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-2 text-right">Click a Panchayat polygon to filter the priority resource table.</p>
+                </div>
+
+                <!-- Right 5 Columns: Panchayat Priority Ranking Table -->
+                <div class="lg:col-span-5 bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h2 class="font-bold text-slate-900 text-sm border-b border-slate-100 pb-3">
+                            📋 High-Priority Panchayat Ranking
+                        </h2>
+                        <div class="overflow-x-auto mt-3">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-semibold border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-2">Panchayat</th>
+                                        <th class="p-2">Risk</th>
+                                        <th class="p-2">Farmers</th>
+                                        <th class="p-2">Resource Need</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100" id="gov-priority-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Quick Allocation Action Panel -->
+                    <div class="mt-4 pt-3 border-t border-slate-100 bg-slate-50 p-3 rounded border border-slate-200 space-y-2">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold text-slate-800">Dispatch Drainage Pumps:</span>
+                            <span class="text-xs font-semibold text-emerald-700" id="gov-pump-status">10 Available</span>
+                        </div>
+                        <button onclick="dispatchResource()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2 rounded">
+                            ⚡ Allocate 5 Pumps to Ormanjhi Block HQ
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Governance Analytics Section -->
+            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                <h2 class="font-bold text-slate-900 text-sm border-b border-slate-100 pb-3">
+                    📈 Governance Risk Distribution & Advisory Reach Metrics
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    <div>
+                        <p class="text-xs text-slate-600 mb-2 font-semibold">Risk Frequency by Block (Current Kharif Season)</p>
+                        <div class="chart-container">
+                            <canvas id="govRiskBarChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-600 mb-2 font-semibold">SMS & WhatsApp Advisory Delivery Rate (%)</p>
+                        <div class="chart-container">
+                            <canvas id="govReachLineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- BROADCAST WIZARD MODAL (Governance View) -->
+    <div id="broadcast-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-5 shadow-2xl border border-slate-200 space-y-4 text-xs">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                <h3 class="font-bold text-slate-900 text-sm">📢 Mass Emergency Advisory Broadcast</h3>
+                <button onclick="closeBroadcastModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">&times;</button>
+            </div>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Target Panchayats:</label>
+                    <input type="text" value="Chakla, Irba, Ormanjhi (3 Panchayats)" readonly class="w-full bg-slate-100 border border-slate-300 rounded p-1.5 font-medium">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Select Active KVK Advisory:</label>
+                    <select class="w-full border border-slate-300 rounded p-1.5">
+                        <option>Heavy Rain / False Smut Alert (Issued Sep 27)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Broadcast Channels:</label>
+                    <div class="space-y-1">
+                        <label class="flex items-center space-x-2"><input type="checkbox" checked class="rounded text-emerald-600"> <span>SMS (8,450 Registered Farmers)</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" checked class="rounded text-emerald-600"> <span>WhatsApp Farmers Groups</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" checked class="rounded text-emerald-600"> <span>Gram Panchayat Public Loudspeaker Sync</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
+                <button onclick="closeBroadcastModal()" class="px-3 py-1.5 text-slate-600 hover:bg-slate-100 rounded font-semibold">Cancel</button>
+                <button onclick="executeBroadcast()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold shadow-xs">🚀 Execute Mass Broadcast</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+            <p class="font-medium text-slate-300">Krishi-Mausam • Agro-Meteorological Decision Support Platform MVP</p>
+            <p>Designed for Smart India Hackathon (SIH) • Mesra / Ranchi District, Jharkhand • GIGW 3.0 Compliant</p>
+            <p class="text-slate-500 text-[10px]">Downscaling engine powered by Digital Elevation Models (DEM) & Downscaled NWP Raster Layers</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        /* =========================================================================================
+           STATE MANAGEMENT
+           ========================================================================================= */
+        const appState = {
+            currentRole: 'scientist',
+            language: 'hi',
+            mapResolution: 'panchayat', // 'block' or 'panchayat'
+            mapVariable: 'rain', // 'rain', 'temp', 'humidity'
+            selectedPanchayat: 'Chakla',
+            pumpsAvailable: 10,
+            advisories: [
+                {
+                    id: 1,
+                    date: 'Sep 27, 2026 08:30',
+                    target: 'Chakla, Irba',
+                    crop: 'Paddy',
+                    event: 'Heavy Rain / False Smut',
+                    severity: 'Critical',
+                    reach: '3,400 Farmers',
+                    status: 'Published'
+                },
+                {
+                    id: 2,
+                    date: 'Sep 24, 2026 14:00',
+                    target: 'Kanke Block',
+                    crop: 'Maize',
+                    event: 'High Wind',
+                    severity: 'Moderate',
+                    reach: '5,100 Farmers',
+                    status: 'Archived'
+                }
+            ],
+            panchayatData: {
+                Chakla: { lat: 23.36, lon: 85.32, rain: 48, temp: 33, humidity: 88, risk: 'Critical', farmers: 3400, crop: 'Paddy' },
+                Irba: { lat: 23.38, lon: 85.35, rain: 42, temp: 32, humidity: 86, risk: 'Critical', farmers: 2800, crop: 'Paddy' },
+                Ormanjhi: { lat: 23.40, lon: 85.40, rain: 35, temp: 31, humidity: 82, risk: 'High', farmers: 2200, crop: 'Maize' },
+                Namkum: { lat: 23.30, lon: 85.30, rain: 12, temp: 34, humidity: 70, risk: 'Moderate', farmers: 1800, crop: 'Vegetables' },
+                Kanke: { lat: 23.42, lon: 85.31, rain: 5, temp: 35, humidity: 65, risk: 'Safe', farmers: 1400, crop: 'Mustard' }
+            },
+            translations: {
+                en: {
+                    alertTitle: "Heavy Rain & High Humidity Expected",
+                    alertBody: "Do not apply fertilizer or spray pesticides today. Ensure field drainage is open.",
+                    lblToday: "Today's Weather",
+                    lblMyCrops: "My Selected Crops Health Status",
+                    lblActions: "What Should You Do Today?",
+                    lbl7Day: "7-Day Simple Forecast",
+                    chk1: "Inspect and clean field drainage outlets before 4 PM.",
+                    chk2: "Postpone urea top-dressing application until rain stops.",
+                    chk3: "Move harvested vegetables to elevated covered sheds."
+                },
+                hi: {
+                    alertTitle: "भारी बारिश और उच्च आर्द्रता की चेतावनी",
+                    alertBody: "आज खेत में खाद या कीटनाशक का छिड़काव न करें। खेत से पानी निकलने का रास्ता साफ रखें।",
+                    lblToday: "आज का मौसम",
+                    lblMyCrops: "मेरी फसलों का स्वास्थ्य स्तर",
+                    lblActions: "आज आपको क्या करना चाहिए?",
+                    lbl7Day: "7-दिनों का मौसम पूर्वानुमान",
+                    chk1: "शाम 4 बजे से पहले खेत की नाली की सफाई करें।",
+                    chk2: "बारिश रुकने तक यूरिया का छिड़काव टाल दें।",
+                    chk3: "कटी हुई सब्जियों को ऊंचे और ढके स्थान पर रखें।"
+                },
+                nag: {
+                    alertTitle: "भारी पानी और आद्र हवा कर डर",
+                    alertBody: "आज खेत में खाद चाहे दवा नी छीकू। पानी निकलेक साधन ठीक राखू।",
+                    lblToday: "आज कर मौसम",
+                    lblMyCrops: "मोर फसल कर हाल",
+                    lblActions: "आज रउरे के का करेक चाही?",
+                    lbl7Day: "7-दिन कर मौसम",
+                    chk1: "संजोत 4 बजे से पहले खेत कर नाली साफ करू।",
+                    chk2: "पानी थमे तक यूरिया नी छीकू।",
+                    chk3: "काटल सब्जी के ऊंच ठिन राखू।"
+                }
+            }
+        };
+
+        /* =========================================================================================
+           ROLE SWITCHING & NAVIGATION LOGIC
+           ========================================================================================= */
+        function switchRole(role) {
+            appState.currentRole = role;
+            
+            // Hide all view sections
+            document.getElementById('view-scientist').classList.add('hidden');
+            document.getElementById('view-farmer').classList.add('hidden');
+            document.getElementById('view-governance').classList.add('hidden');
+
+            // Reset tab button styles
+            document.querySelectorAll('.role-tab').forEach(b => {
+                b.classList.remove('bg-emerald-600', 'text-white', 'text-emerald-400');
+                b.classList.add('text-slate-300');
+            });
+
+            // Show active view & set active tab style
+            if (role === 'scientist') {
+                document.getElementById('view-scientist').classList.remove('hidden');
+                document.getElementById('tab-scientist').classList.add('bg-emerald-600', 'text-white');
+                document.getElementById('mob-tab-scientist').classList.add('text-emerald-400');
+                setTimeout(() => { renderScientistMap(); initScientistCharts(); }, 100);
+            } else if (role === 'farmer') {
+                document.getElementById('view-farmer').classList.remove('hidden');
+                document.getElementById('tab-farmer').classList.add('bg-emerald-600', 'text-white');
+                document.getElementById('mob-tab-farmer').classList.add('text-emerald-400');
+            } else if (role === 'governance') {
+                document.getElementById('view-governance').classList.remove('hidden');
+                document.getElementById('tab-governance').classList.add('bg-emerald-600', 'text-white');
+                document.getElementById('mob-tab-governance').classList.add('text-emerald-400');
+                setTimeout(() => { renderGovernanceMap(); initGovernanceCharts(); renderPriorityTable(); }, 100);
+            }
+        }
+
+        /* =========================================================================================
+           CANVAS MAP RENDERING ENGINE (NO SVG DEPENDENCY)
+           ========================================================================================= */
+        function renderScientistMap() {
+            const canvas = document.getElementById('scientistMapCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas dynamic resolution
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const isBlock = appState.mapResolution === 'block';
+
+            if (isBlock) {
+                // Render coarse 10km block raster (large uniform pixel grids)
+                const gridCols = 4;
+                const gridRows = 3;
+                const cellW = canvas.width / gridCols;
+                const cellH = canvas.height / gridRows;
+
+                for (let i = 0; i < gridCols; i++) {
+                    for (let j = 0; j < gridRows; j++) {
+                        ctx.fillStyle = (i === 1 && j === 1) ? 'rgba(220, 38, 38, 0.7)' : 'rgba(16, 185, 129, 0.4)';
+                        ctx.fillRect(i * cellW, j * cellH, cellW - 2, cellH - 2);
+                        
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = '10px Inter';
+                        ctx.fillText(`10km Grid [${i},${j}]`, i * cellW + 10, j * cellH + 20);
+                    }
+                }
+                
+                // Draw Block boundary overlay
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px Inter';
+                ctx.fillText('ORMAMJHI BLOCK (Uniform Coarse Raster)', 20, 30);
+
+            } else {
+                // Render high-resolution 90m downscaled topography-adjusted heatmap
+                const pKeys = Object.keys(appState.panchayatData);
+                const pCoords = [
+                    { name: 'Chakla', x: 0.25, y: 0.35, radius: 65, color: 'rgba(220, 38, 38, 0.85)' },
+                    { name: 'Irba', x: 0.55, y: 0.30, radius: 55, color: 'rgba(239, 68, 68, 0.80)' },
+                    { name: 'Ormanjhi', x: 0.75, y: 0.55, radius: 60, color: 'rgba(249, 115, 22, 0.75)' },
+                    { name: 'Namkum', x: 0.35, y: 0.70, radius: 50, color: 'rgba(250, 204, 21, 0.70)' },
+                    { name: 'Kanke', x: 0.15, y: 0.60, radius: 45, color: 'rgba(16, 185, 129, 0.75)' }
+                ];
+
+                // Smooth gradient raster simulation
+                pCoords.forEach(p => {
+                    const cx = canvas.width * p.x;
+                    const cy = canvas.height * p.y;
+
+                    const grad = ctx.createRadialGradient(cx, cy, 5, cx, cy, p.radius);
+                    grad.addColorStop(0, p.color);
+                    grad.addColorStop(1, 'rgba(15, 23, 42, 0.1)');
+
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = grad;
+                    ctx.fill();
+
+                    // Polygon Boundary simulation
+                    ctx.strokeStyle = (appState.selectedPanchayat === p.name) ? '#ffffff' : 'rgba(255,255,255,0.4)';
+                    ctx.lineWidth = (appState.selectedPanchayat === p.name) ? 3 : 1;
+                    ctx.stroke();
+
+                    // Label
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = (appState.selectedPanchayat === p.name) ? 'bold 12px Inter' : '10px Inter';
+                    ctx.fillText(p.name, cx - 20, cy);
+                });
+
+                // Water body contour line
+                ctx.beginPath();
+                ctx.moveTo(0, canvas.height * 0.15);
+                ctx.quadraticCurveTo(canvas.width * 0.5, canvas.height * 0.25, canvas.width, canvas.height * 0.1);
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        function toggleResolution(res) {
+            appState.mapResolution = res;
+            document.getElementById('res-block').className = res === 'block' ? 'px-2 py-1 rounded bg-emerald-600 text-white shadow-xs' : 'px-2 py-1 rounded text-slate-600';
+            document.getElementById('res-panchayat').className = res === 'panchayat' ? 'px-2 py-1 rounded bg-emerald-600 text-white shadow-xs' : 'px-2 py-1 rounded text-slate-600';
+            renderScientistMap();
+        }
+
+        // Attach Canvas Interaction (Hover Tooltip & Click)
+        document.addEventListener("DOMContentLoaded", () => {
+            const canvas = document.getElementById('scientistMapCanvas');
+            const tooltip = document.getElementById('map-tooltip');
+
+            if (canvas) {
+                canvas.addEventListener('mousemove', (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    // Simple spatial collision check
+                    if (x > canvas.width * 0.20 && x < canvas.width * 0.35 && y > canvas.height * 0.25 && y < canvas.height * 0.45) {
+                        tooltip.classList.remove('hidden');
+                        tooltip.style.left = `${x + 10}px`;
+                        tooltip.style.top = `${y + 10}px`;
+                        document.getElementById('tt-name').innerText = 'Chakla Panchayat (Ormanjhi)';
+                        document.getElementById('tt-val').innerText = 'Forecast Rain: 48 mm (High Risk)';
+                    } else {
+                        tooltip.classList.add('hidden');
+                    }
+                });
+
+                canvas.addEventListener('click', (e) => {
+                    appState.selectedPanchayat = 'Chakla';
+                    document.getElementById('active-panchayat-label').innerText = 'Chakla Panchayat (Ormanjhi)';
+                    renderScientistMap();
+                    showToast('Selected Chakla Panchayat. Connected charts updated!');
+                });
+            }
+            
+            // Initial render
+            switchRole('scientist');
+            renderAdvisoryTable();
+        });
+
+        /* =========================================================================================
+           GOVERNANCE MAP CANVAS
+           ========================================================================================= */
+        function renderGovernanceMap() {
+            const canvas = document.getElementById('governanceMapCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Ranchi Panchayats Choropleth Polygons
+            const regions = [
+                { name: 'Chakla', color: '#dc2626', x: 0.3, y: 0.3, r: 50 },
+                { name: 'Irba', color: '#dc2626', x: 0.5, y: 0.25, r: 45 },
+                { name: 'Ormanjhi', color: '#f97316', x: 0.7, y: 0.45, r: 55 },
+                { name: 'Namkum', color: '#facc15', x: 0.4, y: 0.65, r: 50 },
+                { name: 'Kanke', color: '#10b981', x: 0.2, y: 0.55, r: 40 }
+            ];
+
+            regions.forEach(r => {
+                const cx = canvas.width * r.x;
+                const cy = canvas.height * r.y;
+
+                ctx.fillStyle = r.color;
+                ctx.beginPath();
+                ctx.arc(cx, cy, r.r, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 11px Inter';
+                ctx.fillText(r.name, cx - 18, cy);
+            });
+        }
+
+        /* =========================================================================================
+           CHART.JS INTEGRATION (MANDATORY USE)
+           ========================================================================================= */
+        let forecastChart, validationChart, govRiskChart, govReachChart;
+
+        function initScientistCharts() {
+            // 1. 7-Day Forecast Analysis Chart
+            const ctx1 = document.getElementById('scientistForecastChart')?.getContext('2d');
+            if (ctx1 && !forecastChart) {
+                forecastChart = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Mon (28)', 'Tue (29)', 'Wed (30)', 'Thu (1)', 'Fri (2)', 'Sat (3)', 'Sun (4)'],
+                        datasets: [
+                            {
+                                type: 'bar',
+                                label: 'Downscaled Rainfall (mm)',
+                                data: [48, 25, 12, 2, 0, 5, 0],
+                                backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                                yAxisID: 'yRain'
+                            },
+                            {
+                                type: 'line',
+                                label: 'Relative Humidity (%)',
+                                data: [88, 85, 78, 65, 60, 68, 62],
+                                borderColor: '#dc2626',
+                                borderWidth: 2,
+                                fill: false,
+                                yAxisID: 'yRH'
+                            },
+                            {
+                                type: 'line',
+                                label: 'Tmax (°C)',
+                                data: [33, 31, 34, 35, 36, 34, 33],
+                                borderColor: '#f59e0b',
+                                borderWidth: 2,
+                                borderDash: [4, 4],
+                                fill: false,
+                                yAxisID: 'yRH'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            yRain: { type: 'linear', position: 'left', title: { display: true, text: 'Rainfall (mm)' }, max: 60 },
+                            yRH: { type: 'linear', position: 'right', title: { display: true, text: 'RH (%) / Temp (°C)' }, max: 100 }
+                        },
+                        plugins: {
+                            legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } }
+                        }
+                    }
+                });
+            }
+
+            // 2. Scatter Plot: Predicted vs Observed AWS
+            const ctx2 = document.getElementById('validationScatterChart')?.getContext('2d');
+            if (ctx2 && !validationChart) {
+                validationChart = new Chart(ctx2, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [
+                            {
+                                label: 'AWS Weather Station Observations vs Model',
+                                data: [
+                                    { x: 22, y: 22.5 }, { x: 25, y: 24.8 }, { x: 28, y: 28.2 },
+                                    { x: 31, y: 30.5 }, { x: 33, y: 33.8 }, { x: 35, y: 34.6 },
+                                    { x: 18, y: 18.9 }, { x: 29, y: 29.1 }
+                                ],
+                                backgroundColor: '#059669'
+                            },
+                            {
+                                type: 'line',
+                                label: '1:1 Perfect Match Line',
+                                data: [{ x: 15, y: 15 }, { x: 40, y: 40 }],
+                                borderColor: '#cbd5e1',
+                                borderDash: [5, 5],
+                                pointRadius: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { title: { display: true, text: 'Observed AWS Sensor Value' } },
+                            y: { title: { display: true, text: 'Downscaled Model Prediction' } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function initGovernanceCharts() {
+            // 3. Risk by Block Bar Chart
+            const ctx3 = document.getElementById('govRiskBarChart')?.getContext('2d');
+            if (ctx3 && !govRiskChart) {
+                govRiskChart = new Chart(ctx3, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Ormanjhi', 'Kanke', 'Namkum', 'Mandhar', 'Ratu'],
+                        datasets: [{
+                            label: 'High-Risk Alerts Issued',
+                            data: [12, 5, 4, 2, 1],
+                            backgroundColor: ['#dc2626', '#f97316', '#facc15', '#10b981', '#10b981']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // 4. Advisory Reach Line Chart
+            const ctx4 = document.getElementById('govReachLineChart')?.getContext('2d');
+            if (ctx4 && !govReachChart) {
+                govReachChart = new Chart(ctx4, {
+                    type: 'line',
+                    data: {
+                        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                        datasets: [{
+                            label: 'Delivery Success Rate (%)',
+                            data: [82, 88, 91, 94],
+                            borderColor: '#059669',
+                            tension: 0.3,
+                            fill: true,
+                            backgroundColor: 'rgba(5, 150, 105, 0.1)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { max: 100 } }
+                    }
+                });
+            }
+        }
+
+        /* =========================================================================================
+           TAB SWITCHING (SCIENTIST VIEW)
+           ========================================================================================= */
+        function switchScientistTab(tab) {
+            if (tab === 'forecast') {
+                document.getElementById('scientist-tab-forecast').classList.remove('hidden');
+                document.getElementById('scientist-tab-validation').classList.add('hidden');
+                document.getElementById('tab-btn-forecast').className = 'text-emerald-600 border-b-2 border-emerald-600 pb-2';
+                document.getElementById('tab-btn-validation').className = 'text-slate-500 hover:text-slate-800 pb-2';
+            } else {
+                document.getElementById('scientist-tab-forecast').classList.add('hidden');
+                document.getElementById('scientist-tab-validation').classList.remove('hidden');
+                document.getElementById('tab-btn-validation').className = 'text-emerald-600 border-b-2 border-emerald-600 pb-2';
+                document.getElementById('tab-btn-forecast').className = 'text-slate-500 hover:text-slate-800 pb-2';
+            }
+        }
+
+        /* =========================================================================================
+           FORM & ADVISORY PUBLISHING LOGIC
+           ========================================================================================= */
+        function autoSuggestAdvisory() {
+            document.getElementById('adv-text-en').value = "Critical Alert: Heavy downpour (48mm) expected in next 24h with 88% humidity. High risk of Paddy False Smut. Halt urea application & ensure drainage clearance.";
+            document.getElementById('adv-text-hi').value = "महत्वपूर्ण चेतावनी: अगले 24 घंटों में भारी बारिश (48mm) और 88% नमी की संभावना। धान में कंडुआ रोग का उच्च जोखिम। यूरिया का छिड़काव रोकें और जल निकासी नाली साफ रखें।";
+            document.getElementById('adv-text-nag').value = "जरूरी सूचना: आवइया 24 घंटा में भारी पानी (48mm) गिरेक डर आहे। धान में बीमारी कर खतरा। यूरिया नी छीकू और नाली साफ राखू।";
+            showToast('Loaded ICAR Rule-based advisory suggestion!');
+        }
+
+        function handlePublishAdvisory(e) {
+            e.preventDefault();
+            const target = document.getElementById('adv-target').value;
+            const crop = document.getElementById('adv-crop').value;
+            const event = document.getElementById('adv-event').value;
+            const textEn = document.getElementById('adv-text-en').value;
+
+            const newAdv = {
+                id: appState.advisories.length + 1,
+                date: 'Just Now',
+                target: target,
+                crop: crop,
+                event: event,
+                severity: 'Critical',
+                reach: '3,400 Farmers',
+                status: 'Published'
+            };
+
+            appState.advisories.unshift(newAdv);
+            renderAdvisoryTable();
+
+            // Update Farmer Alert Banner in State
+            document.getElementById('f-alert-title').innerText = `${event}: ${crop}`;
+            document.getElementById('f-alert-body').innerText = `"${textEn}"`;
+
+            showToast(`✅ Advisory Published & Sent to ${target}!`);
+        }
+
+        function renderAdvisoryTable() {
+            const tbody = document.getElementById('advisory-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = appState.advisories.map(a => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-2.5 font-medium text-slate-900">${a.date}</td>
+                    <td class="p-2.5">${a.target}</td>
+                    <td class="p-2.5 font-semibold text-slate-800">${a.crop}</td>
+                    <td class="p-2.5">${a.event}</td>
+                    <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700">${a.severity}</span></td>
+                    <td class="p-2.5">${a.reach}</td>
+                    <td class="p-2.5 text-right"><span class="text-emerald-600 font-bold">● ${a.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        /* =========================================================================================
+           FARMER MULTILINGUAL TRANSLATION LOGIC
+           ========================================================================================= */
+        function changeFarmerLanguage(lang) {
+            appState.language = lang;
+            const t = appState.translations[lang];
+            if (!t) return;
+
+            document.getElementById('f-alert-title').innerText = t.alertTitle;
+            document.getElementById('f-alert-body').innerText = t.alertBody;
+            document.getElementById('f-lbl-today').innerText = t.lblToday;
+            document.getElementById('f-lbl-mycrops').innerText = t.lblMyCrops;
+            document.getElementById('f-lbl-actions').innerText = t.lblActions;
+            document.getElementById('f-lbl-7day').innerText = t.lbl7Day;
+            document.getElementById('chk-1').innerText = t.chk1;
+            document.getElementById('chk-2').innerText = t.chk2;
+            document.getElementById('chk-3').innerText = t.chk3;
+
+            showToast(`Switched interface language to ${lang.toUpperCase()}`);
+        }
+
+        function acknowledgeAlert() {
+            const card = document.getElementById('farmer-critical-card');
+            card.classList.remove('animate-pulse', 'bg-red-600');
+            card.classList.add('bg-slate-700');
+            showToast('Alert marked as acknowledged.');
+        }
+
+        function triggerHelplineCall() {
+            alert("Connecting to KVK Ranchi Farmer Helpline: 1800-180-1551...");
+        }
+
+        /* =========================================================================================
+           GOVERNANCE PORTAL LOGIC
+           ========================================================================================= */
+        function renderPriorityTable() {
+            const tbody = document.getElementById('gov-priority-body');
+            if (!tbody) return;
+
+            const rows = [
+                { name: 'Chakla', risk: 'Critical', farmers: '3,400', need: '15 Drainage Pumps' },
+                { name: 'Irba', risk: 'Critical', farmers: '2,800', need: '10 Drainage Pumps' },
+                { name: 'Ormanjhi', risk: 'High', farmers: '2,200', need: 'Storage Tarpaulins' },
+                { name: 'Namkum', risk: 'Moderate', farmers: '1,800', need: 'Monitoring' }
+            ];
+
+            tbody.innerHTML = rows.map(r => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-2 font-bold text-slate-800">${r.name}</td>
+                    <td class="p-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${r.risk==='Critical'?'bg-red-100 text-red-700':'bg-orange-100 text-orange-700'}">${r.risk}</span></td>
+                    <td class="p-2">${r.farmers}</td>
+                    <td class="p-2 font-medium text-slate-700">${r.need}</td>
+                </tr>
+            `).join('');
+        }
+
+        function dispatchResource() {
+            if (appState.pumpsAvailable > 0) {
+                appState.pumpsAvailable -= 5;
+                document.getElementById('gov-pump-status').innerText = `${appState.pumpsAvailable} Available`;
+                showToast('⚡ Allocated 5 Drainage Pumps to Ormanjhi Block HQ!');
+            } else {
+                showToast('⚠️ No additional pumps available in HQ inventory.');
+            }
+        }
+
+        function openBroadcastModal() {
+            document.getElementById('broadcast-modal').classList.remove('hidden');
+        }
+
+        function closeBroadcastModal() {
+            document.getElementById('broadcast-modal').classList.add('hidden');
+        }
+
+        function executeBroadcast() {
+            closeBroadcastModal();
+            showToast('🚀 Mass SMS & WhatsApp Advisory Broadcast Dispatched!');
+        }
+
+        /* =========================================================================================
+           UTILITY FUNCTIONS
+           ========================================================================================= */
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-xl border border-slate-700 flex items-center space-x-2 animate-bounce pointer-events-auto';
+            toast.innerHTML = `<span>ℹ️</span><span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        }
+
+        function filterScientistMap(type) {
+            showToast(`Filtering spatial downscaling map by: ${type.toUpperCase()}`);
+            renderScientistMap();
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function searchAdvisories() {
+            const val = document.getElementById('advisory-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#advisory-table-body tr');
+            rows.forEach(r => {
+                r.style.display = r.innerText.toLowerCase().includes(val) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>

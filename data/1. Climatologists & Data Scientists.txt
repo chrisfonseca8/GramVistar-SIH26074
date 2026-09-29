@@ -1,0 +1,16 @@
+1. Climatologists & Data Scientists (The Auditors)Goal: Validate the mathematical rigor, physics, and statistical accuracy of the downscaling engine.
+Plot 1: Elevation and Topography Map (Understanding the physical layout of the block)
+Plot 2: Variable Correlation Heatmap (Do the physical relationships make sense?)Plot 4: Spatial Error / Uncertainty Map (Where does the model struggle?)
+Plot 5: Predicted vs. Observed Scatter Plot (What is the overall $R^2$ and RMSE?)
+Plot 6: Time Series Residual Plot (Is there a seasonal bias in the errors?)
+Plot 8: Rainfall Probability Distribution (How much rain is actually coming, and how certain is it?)
+Plot 10: Feature Importance Bar Chart (Is the AI using the right geographic clues?)
+2. Local Government & Extension Officers (The Planners & Translators)Goal: Understand spatial distribution of weather to manage block-level resources, prepare disaster responses, and translate data into text advisories.
+Plot 1: Elevation and Topography Map (Understanding the physical layout of the block)
+Plot 3: Side-by-Side Spatial Contour Maps (Visually proving the micro-climates across different Panchayats)
+Plot 11: Panchayat Vulnerability Ranking (Deciding which Panchayat gets relief/warnings first)
+3. Farmers & FPOs (The End-Users)Goal: Hyper-local, binary decision-making for daily crop management. They do not care how the data was generated; they only care what it means for their field today.
+Plot 7: Crop-Specific Threshold Time Series (When will it get too hot/cold for my specific crop?)
+Plot 8: Rainfall Probability Distribution (How much rain is actually coming, and how certain is it?)
+Plot 9: Soil Moisture Deficit Gauge (Do I need to turn on the pump today?)
+Plot 12: Farm Operations Window Matrix (Is it safe to spray fertilizer this afternoon?)
