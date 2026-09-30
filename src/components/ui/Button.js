@@ -2,8 +2,7 @@ const VARIANT_CLASSES = {
   primary: "bg-primary text-primary-foreground hover:opacity-90",
   secondary: "border border-border hover:border-border-hover ",
   ghost: "text-foreground/70 hover:text-foreground",
-  danger:
-    "border border-red-300 text-red-700 hover:border-red-500 dark:border-red-900/60 dark:text-red-400",
+  danger: "border border-red-300 text-red-700 hover:border-red-500",
 };
 
 const SIZE_CLASSES = {

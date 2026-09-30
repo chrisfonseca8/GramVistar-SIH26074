@@ -107,7 +107,7 @@ export function VoiceNoteRecorder({ value, onChange }) {
             size="sm"
             onClick={stopRecording}
           >
-            {t("farmer.feedback.voiceNote.stop")} ({seconds}s)
+            {t("farmer.feedback.voiceNote.stopWithSeconds", { seconds })}
           </Button>
         ) : (
           <Button
@@ -132,9 +132,7 @@ export function VoiceNoteRecorder({ value, onChange }) {
           </Button>
         ) : null}
       </div>
-      {error ? (
-        <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
-      ) : null}
+      {error ? <p className="text-xs text-red-600">{error}</p> : null}
       {value && !recording ? (
         <audio controls src={value} className="h-8 w-full max-w-xs" />
       ) : null}

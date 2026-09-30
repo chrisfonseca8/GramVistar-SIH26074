@@ -30,8 +30,8 @@ export function LanguageSwitch() {
           aria-pressed={language === option.code}
           className={`px-3 py-1.5 transition ${
             language === option.code
-              ? "bg-primary text-primary-foreground"
-              : "text-foreground/60 hover:text-foreground"
+              ? "bg-accent text-accent-foreground"
+              : "text-text-muted hover:text-foreground"
           }`}
         >
           {option.label}

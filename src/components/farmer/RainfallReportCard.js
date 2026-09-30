@@ -8,8 +8,7 @@ import { useRainfallReportsStore } from "@/store/rainfallReportsStore";
 
 /**
  * Participatory sensing — lets a farmer report today's
- * actual rainfall, independent of the official forecast. Scientists can
- * compare these against the forecast on the Participatory Sensing page.
+ * actual rainfall, independent of the official forecast.
  */
 export function RainfallReportCard({ panchayat }) {
   const { t } = useTranslation();

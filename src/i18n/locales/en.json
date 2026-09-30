@@ -13,7 +13,13 @@
     "loading": "Loading…",
     "loadFailedTitle": "Failed to load local data",
     "nothingToShow": "Nothing to show yet",
-    "somethingWrong": "Something went wrong"
+    "somethingWrong": "Something went wrong",
+    "unknown": "Unknown",
+    "offline": "You appear to be offline — showing the most recently loaded data.",
+    "chasBlock": "Chas Block",
+    "loadingPanchayats": "Loading panchayats…",
+    "panchayatsUnavailable": "Panchayats unavailable",
+    "selectedPanchayat": "Selected panchayat"
   },
   "breadcrumb": {
     "scientist": "Scientist / KVK",
@@ -33,12 +39,8 @@
     "government.overview": "Overview",
     "government.climateOverview": "Climate Overview",
     "government.riskMaps": "Risk Maps",
-    "government.operations": "Operations",
-    "government.disasterModules": "Disaster Management",
-    "government.reports": "Reports",
-    "government.alertEscalation": "Alert Escalation",
-    "government.drillMode": "Drill Mode",
-    "government.coordination": "Coordination"
+    "government.reliefResourceAllocator": "Relief & Resource Allocator",
+    "government.alertEscalation": "Alert Escalation"
   },
   "login": {
     "title": "Log in",
@@ -79,10 +81,85 @@
     "offlineCached": "Showing your last cached advisory — could not reach local data just now.",
     "why": "Why",
     "confidence": "Confidence: {{confidence}}",
+    "tabs": {
+      "today": "Today & Actions",
+      "weather": "Weather & Analytics"
+    },
     "cropLabel": "Crop",
-    "cropStageLabel": "Crop stage",
     "selectCrop": "Select crop",
-    "selectCropStage": "Select stage",
+    "crops": {
+      "Rice": "Rice",
+      "Maize": "Maize",
+      "Mustard": "Mustard"
+    },
+    "cropStages": {
+      "Sowing": "Sowing",
+      "Vegetative": "Vegetative",
+      "Flowering": "Flowering",
+      "Maturity": "Maturity",
+      "Harvest": "Harvest"
+    },
+    "cropSelectionCard": {
+      "title": "Select Your Crop",
+      "description": "Sets the crop-specific parts of today's temperature outlook below."
+    },
+    "advisoryProgress": {
+      "title": "Advisory Action Progress"
+    },
+    "conditions": {
+      "soilMoisture": "Soil Moisture",
+      "sprayWindow": "Spray Window",
+      "favorable": "FAVORABLE",
+      "unfavorable": "UNFAVORABLE",
+      "goAhead": "Go ahead",
+      "holdOff": "Hold off",
+      "soilStatus": {
+        "sufficient": "Sufficient",
+        "gettingDry": "Getting dry",
+        "needsWater": "Needs water"
+      },
+      "humidityStatus": {
+        "fungalRisk": "Fungal risk",
+        "elevated": "Elevated",
+        "normal": "Normal"
+      },
+      "windStatus": {
+        "caution": "Caution",
+        "calm": "Calm"
+      }
+    },
+    "forecastChart": {
+      "title": "5-Day Forecast: Temperature & Rainfall",
+      "rainfall": "Rainfall (mm)",
+      "maxTemp": "Max Temp (°C)",
+      "temperatureAxis": "Temperature (°C)"
+    },
+    "stressBreakdown": {
+      "title": "Atmospheric & Soil Stress",
+      "unavailable": "No current-hour data available",
+      "humidity": "Humidity (%)",
+      "soilDeficit": "Soil Deficit (m³/m³ ×100)",
+      "wind": "Wind (km/h)"
+    },
+    "alertsDetail": {
+      "frostType": "Frost Risk",
+      "heavyRainType": "Heavy Rain Likely",
+      "heatStressType": "Heat Stress",
+      "frostMessage": "Frost {{level}} — current temperature {{tempC}}°C",
+      "heavyRainMessage": "{{pct}}% rain probability this hour",
+      "heatStressMessage": "Heat index {{value}}°C"
+    },
+    "generalRecommendations": {
+      "title": "General Recommendations",
+      "disclaimer": "General good-practice tips, not specific to today's forecast or your panchayat.",
+      "tips": [
+        "Rotate crops each season to maintain soil fertility and reduce pest build-up.",
+        "Test your soil periodically to apply fertilizer only where it's actually needed.",
+        "Store harvested grain in a dry, pest-proof container to reduce post-harvest loss.",
+        "Keep field bunds clear so excess water can drain during heavy rain.",
+        "Check weather updates before planning spraying or harvesting for the week."
+      ]
+    },
     "actionCard": {
       "title": "Today's Actions",
       "irrigate": "Irrigate",
@@ -112,12 +189,6 @@
     "soilMoisture": {
       "title": "Soil Moisture",
       "description": "How dry your soil is right now. Green = fine, yellow = getting dry, red = needs water soon."
-    },
-    "operationsOutlook": {
-      "title": "This Week: Spray & Irrigation",
-      "spray": "Spray",
-      "irrigate": "Irrigate",
-      "frost": "Frost"
     },
     "cropOutlook": {
       "title": "Temperature vs. {{crop}}",
@@ -179,7 +250,8 @@
         "stop": "Stop",
         "remove": "Remove",
         "unsupported": "Voice recording isn't supported in this browser.",
-        "permissionDenied": "Microphone access was denied or unavailable."
+        "permissionDenied": "Microphone access was denied or unavailable.",
+        "stopWithSeconds": "Stop ({{seconds}}s)"
       },
       "submit": "Submit feedback",
       "submitAnother": "Submit another",
@@ -217,12 +289,6 @@
       "yield": {
         "expected": "Expected yield (quintals/acre)"
       }
-    },
-    "preparedness": {
-      "title": "Preparedness Points",
-      "level": "Level: {{level}}",
-      "markPrepared": "Mark as prepared",
-      "done": "Prepared ✓"
     },
     "readAloud": {
       "play": "Read aloud",

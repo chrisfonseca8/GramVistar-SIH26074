@@ -14,12 +14,16 @@ export const RISK_LABELS = {
   red: "Danger",
 };
 
-/** Tailwind-friendly hex values; also usable directly in inline styles/SVG. */
+/**
+ * Pastel status colors (Soft Mint / Sunlight Yellow / Soft Peach / Soft
+ * Coral) matching the app's light, dewy theme — usable directly in
+ * inline styles/SVG.
+ */
 export const RISK_COLORS = {
-  green: "#16a34a",
-  yellow: "#eab308",
-  orange: "#f97316",
-  red: "#dc2626",
+  green: "#A5D6A7",
+  yellow: "#FFF59D",
+  orange: "#FFCC80",
+  red: "#FFAB91",
 };
 
 /**

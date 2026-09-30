@@ -71,7 +71,7 @@ export default function FarmerFeedbackPage() {
   function handleSubmit(event) {
     event.preventDefault();
     const stored = addFeedback({
-      panchayat: selectedPanchayat ?? "Unknown",
+      panchayat: selectedPanchayat ?? t("common.unknown"),
       crop: selectedCrop,
       cropStage: selectedCropStage,
       category,
@@ -210,7 +210,7 @@ function CategoryFields({ category, fields, onChange, t }) {
         onChange={(event) => onChange("currentStage", event.target.value)}
         options={CROP_STAGE_OPTIONS.map((stage) => ({
           value: stage,
-          label: stage,
+          label: t(`farmer.cropStages.${stage}`, stage),
         }))}
       />
     );

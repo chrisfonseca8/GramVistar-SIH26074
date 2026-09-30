@@ -3,7 +3,7 @@
  * Version identifier lets later logs know which prompt produced a
  * given advisory.
  */
-export const ADVISORY_PROMPT_VERSION = "advisory-v3";
+export const ADVISORY_PROMPT_VERSION = "advisory-v4";
 
 const AUDIENCE_BRIEF = {
   farmer: `You are drafting for a FARMER audience, for one specific crop. Keep
@@ -60,7 +60,7 @@ ${SHARED_SYSTEM_PROMPT_RULES}`;
 export function buildAdvisoryUserPrompt(advisoryInput) {
   return [
     `Panchayat: ${advisoryInput.panchayat}`,
-    `Crop: ${advisoryInput.crop}, stage: ${advisoryInput.cropStage}`,
+    `Crop: ${advisoryInput.crop}`,
     `Date range: ${advisoryInput.dateRange.start} to ${advisoryInput.dateRange.end}`,
     `Crop thresholds: ${advisoryInput.thresholds ? JSON.stringify(advisoryInput.thresholds) : "unavailable"}`,
     `Forecast uncertainty level: ${advisoryInput.uncertainty.level}`,

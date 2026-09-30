@@ -2,13 +2,7 @@
 
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/Card";
-
-function formatDayLabel(dateKey) {
-  return new Date(dateKey).toLocaleDateString("en-IN", {
-    weekday: "short",
-    timeZone: "UTC",
-  });
-}
+import { formatDayLabel } from "@/lib/formatters";
 
 /**
  * Irrigation Schedule card — a plain-language day list
@@ -16,7 +10,7 @@ function formatDayLabel(dateKey) {
  * already computes, not a re-derivation.
  */
 export function IrrigationScheduleCard({ days }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
     <Card title={t("farmer.irrigationSchedule.title")}>
@@ -30,12 +24,12 @@ export function IrrigationScheduleCard({ days }) {
               key={day.dateKey}
               className={`rounded-md border p-2 ${
                 decision
-                  ? "border-blue-300 bg-blue-50 dark:border-blue-900/50 dark:bg-blue-950/30"
-                  : "border-border "
+                  ? "border-blue-300 bg-blue-50 text-blue-900"
+                  : "border-border bg-surface text-foreground"
               }`}
             >
-              <p className="text-xs text-foreground/50">
-                {formatDayLabel(day.dateKey)}
+              <p className="text-xs opacity-70">
+                {formatDayLabel(day.dateKey, i18n.language)}
               </p>
               <p className="mt-1 text-xs font-semibold">
                 {decision === null

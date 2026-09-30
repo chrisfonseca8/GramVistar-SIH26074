@@ -54,17 +54,22 @@ export function formatElevation(valueM) {
   return formatNumber(valueM, { decimals: 0, suffix: "m" });
 }
 
+function localeFor(language) {
+  return language === "hi" ? "hi-IN" : "en-IN";
+}
+
 /**
  * "2016-01"-> "Jan 2016". Falls back to the placeholder for a
  * malformed/missing key rather than showing raw garbage.
  * @param {string|null|undefined} monthKey
+ * @param {"en"|"hi"} [language]
  */
-export function formatMonthLabel(monthKey) {
+export function formatMonthLabel(monthKey, language = "en") {
   if (!monthKey) return MISSING_PLACEHOLDER;
   const match = /^(\d{4})-(\d{2})$/.exec(monthKey);
   if (!match) return MISSING_PLACEHOLDER;
   const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, 1));
-  return date.toLocaleDateString("en-IN", {
+  return date.toLocaleDateString(localeFor(language), {
     month: "short",
     year: "numeric",
     timeZone: "UTC",
@@ -74,11 +79,12 @@ export function formatMonthLabel(monthKey) {
 /**
  * A `Date` -> "27 Sep, 14:00". Used for hourly forecast timestamps.
  * @param {Date|null|undefined} date
+ * @param {"en"|"hi"} [language]
  */
-export function formatHourLabel(date) {
+export function formatHourLabel(date, language = "en") {
   if (!(date instanceof Date) || Number.isNaN(date.getTime()))
     return MISSING_PLACEHOLDER;
-  return date.toLocaleString("en-IN", {
+  return date.toLocaleString(localeFor(language), {
     day: "numeric",
     month: "short",
     hour: "2-digit",
@@ -91,14 +97,46 @@ export function formatHourLabel(date) {
 /**
  * A `Date` -> "27 Sep 2026". Used for date-only display.
  * @param {Date|null|undefined} date
+ * @param {"en"|"hi"} [language]
  */
-export function formatDateLabel(date) {
+export function formatDateLabel(date, language = "en") {
   if (!(date instanceof Date) || Number.isNaN(date.getTime()))
     return MISSING_PLACEHOLDER;
-  return date.toLocaleDateString("en-IN", {
+  return date.toLocaleDateString(localeFor(language), {
     day: "numeric",
     month: "short",
     year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+/**
+ * "2026-09-27" -> "Sun". Used for short weekday labels in daily
+ * forecast strips.
+ * @param {string|null|undefined} dateKey
+ * @param {"en"|"hi"} [language]
+ */
+export function formatDayLabel(dateKey, language = "en") {
+  if (!dateKey) return MISSING_PLACEHOLDER;
+  const date = new Date(dateKey);
+  if (Number.isNaN(date.getTime())) return MISSING_PLACEHOLDER;
+  return date.toLocaleDateString(localeFor(language), {
+    weekday: "short",
+    timeZone: "UTC",
+  });
+}
+
+/**
+ * A `Date` -> "2 PM". Used for the hourly rain-probability strip.
+ * @param {Date|null|undefined} date
+ * @param {"en"|"hi"} [language]
+ */
+export function formatHourOnly(date, language = "en") {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime()))
+    return MISSING_PLACEHOLDER;
+  return date.toLocaleTimeString(localeFor(language), {
+    hour: "numeric",
+    hour12: true,
     timeZone: "UTC",
   });
 }

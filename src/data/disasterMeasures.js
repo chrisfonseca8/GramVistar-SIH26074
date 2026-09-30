@@ -1,13 +1,13 @@
 /**
- * The named response measures per hazard for the Disaster Management
- * modules (all modules are UI/simulation only). This is
- * a fixed reference list, not derived from any data source: `/data` has
- * no disaster-response/relief-measure dataset, so these
- * measures are named explicitly per hazard here. Hazard `key`s intentionally match
- * `RISK_LAYERS`' keys (`src/data/selectors/riskMaps.js`) for
- * the 5 overlapping hazards, so this module's checklist can show each
- * panchayat's real computed severity for that hazard alongside the
- * (simulated) measures being tracked for it.
+ * The named response measures per hazard, fed into the Government/DM-DC
+ * advisory input (`buildAuthorityAdvisoryInput`) so the LLM/mock
+ * generator knows which response measures exist for a hazard when
+ * drafting an action. This is a fixed reference list, not derived from
+ * any data source: `/data` has no disaster-response/relief-measure
+ * dataset, so these measures are named explicitly per hazard here.
+ * Hazard `key`s intentionally match `RISK_LAYERS`'s keys
+ * (`src/data/selectors/riskMaps.js`) so each hazard's real computed
+ * severity lines up with the measures tracked for it.
  */
 export const DISASTER_MODULES = [
   {

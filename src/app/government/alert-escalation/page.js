@@ -12,7 +12,6 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
-import { Alert } from "@/components/ui/Alert";
 import { selectBlockAlerts } from "@/data/selectors/alerts";
 import {
   formatAlertSmsPreview,
@@ -87,11 +86,6 @@ export default function AlertEscalationPage() {
           actually sent.
         </p>
       </div>
-
-      <Alert tone="info">
-        SIMULATED — escalation and delivery previews here do not dispatch
-        anything real.
-      </Alert>
 
       <Card title={`Active Alerts (${alerts.length})`}>
         {alerts.length === 0 ? (

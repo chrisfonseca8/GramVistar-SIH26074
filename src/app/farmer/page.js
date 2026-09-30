@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDataStore } from "@/store/dataStore";
 import { useSelectionStore } from "@/store/selectionStore";
@@ -9,13 +10,13 @@ import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Card } from "@/components/ui/Card";
 import { Alert } from "@/components/ui/Alert";
+import { Tabs } from "@/components/ui/Tabs";
 import { TodaysActionCard } from "@/components/farmer/TodaysActionCard";
 import { FiveDayForecast } from "@/components/farmer/FiveDayForecast";
 import { FarmerAlerts } from "@/components/farmer/FarmerAlerts";
-import { CropStageSelectors } from "@/components/farmer/CropStageSelectors";
+import { CropSelector } from "@/components/farmer/CropSelector";
 import { RainChanceToday } from "@/components/farmer/RainChanceToday";
 import { SoilMoistureGaugeCard } from "@/components/farmer/SoilMoistureGaugeCard";
-import { WeeklyOperationsOutlook } from "@/components/farmer/WeeklyOperationsOutlook";
 import { CropThresholdOutlook } from "@/components/farmer/CropThresholdOutlook";
 import { TodaysWeatherCard } from "@/components/farmer/TodaysWeatherCard";
 import { HourlyRainProbabilityCard } from "@/components/farmer/HourlyRainProbabilityCard";
@@ -23,8 +24,11 @@ import { HeatColdStressCard } from "@/components/farmer/HeatColdStressCard";
 import { PestDiseaseCard } from "@/components/farmer/PestDiseaseCard";
 import { IrrigationScheduleCard } from "@/components/farmer/IrrigationScheduleCard";
 import { RainfallReportCard } from "@/components/farmer/RainfallReportCard";
-import { PreparednessCard } from "@/components/farmer/PreparednessCard";
+import { GeneralRecommendationsCard } from "@/components/farmer/GeneralRecommendationsCard";
 import { ReadAloudButton } from "@/components/farmer/ReadAloudButton";
+import { EnvironmentalConditionCards } from "@/components/farmer/EnvironmentalConditionCards";
+import { FiveDayForecastChart } from "@/components/farmer/FiveDayForecastChart";
+import { StressBreakdownChart } from "@/components/farmer/StressBreakdownChart";
 import {
   selectPublishedAdvisoryForPanchayat,
   getLatestVersionContent,
@@ -35,7 +39,6 @@ import {
   selectTodaysActionCard,
   selectFiveDayForecast,
   selectTodayRainByDaypart,
-  selectWeeklyOperationsOutlook,
   selectCropThresholdOutlook,
 } from "@/data/selectors/farmerHome";
 import {
@@ -71,8 +74,13 @@ export default function FarmerPortalPage() {
   );
   const advisories = useAdvisoryStore((state) => state.advisories);
   const selectedCrop = useFarmerStore((state) => state.selectedCrop);
-  const selectedCropStage = useFarmerStore((state) => state.selectedCropStage);
   const thresholdOverrides = useThresholdStore((state) => state.overrides);
+  const [activeTab, setActiveTab] = useState("today");
+
+  const homeTabs = [
+    { key: "today", label: t("farmer.tabs.today") },
+    { key: "weather", label: t("farmer.tabs.weather") },
+  ];
 
   // Offline support: `advisoryStore` is a separate,
   // already-persisted Zustand store from `dataStore` — it survives a
@@ -94,7 +102,7 @@ export default function FarmerPortalPage() {
     if (status === "error") {
       return (
         <main className="flex-1 px-6 py-8">
-          <ErrorState title="Failed to load local data" description={error} />
+          <ErrorState title={t("common.loadFailedTitle")} description={error} />
         </main>
       );
     }
@@ -144,7 +152,7 @@ export default function FarmerPortalPage() {
     if (status === "error") {
       return (
         <main className="flex-1 px-6 py-8">
-          <ErrorState title="Failed to load local data" description={error} />
+          <ErrorState title={t("common.loadFailedTitle")} description={error} />
         </main>
       );
     }
@@ -161,18 +169,10 @@ export default function FarmerPortalPage() {
   // current forecast and don't depend on a Scientist having published an
   // advisory yet. The published advisory (if any) is a richer narrative
   // shown underneath, not a gate on the rest of the page.
-  const actionCard = selectTodaysActionCard(
-    data,
-    selectedPanchayat,
-    selectedCropStage,
-  );
+  const actionCard = selectTodaysActionCard(data, selectedPanchayat);
   const fiveDayForecast = selectFiveDayForecast(data, selectedPanchayat);
   const alerts = selectPanchayatAlerts(data, selectedPanchayat);
   const rainByDaypart = selectTodayRainByDaypart(data, selectedPanchayat);
-  const operationsOutlook = selectWeeklyOperationsOutlook(
-    data,
-    selectedPanchayat,
-  );
   const currentSoilDeficit =
     selectForecastPanchayat(data, selectedPanchayat)[0]?.soilDeficit ?? null;
   const cropThresholds = selectedCrop
@@ -200,67 +200,109 @@ export default function FarmerPortalPage() {
         </h1>
       </div>
 
-      <CropStageSelectors />
+      <Tabs tabs={homeTabs} active={activeTab} onChange={setActiveTab} />
 
-      <TodaysActionCard actionCard={actionCard} />
+      {activeTab === "today" ? (
+        <div className="space-y-6">
+          <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-foreground/60">
+              {t("farmer.cropSelectionCard.title")}
+            </h2>
+            <p className="mt-1 text-xs text-foreground/50">
+              {t("farmer.cropSelectionCard.description")}
+            </p>
+            <div className="mt-4">
+              <CropSelector />
+            </div>
+          </div>
 
-      <FarmerAlerts alerts={alerts} />
+          {cachedAdvisory ? (
+            <AdvisorySection
+              advisory={cachedAdvisory}
+              panchayat={selectedPanchayat}
+              t={t}
+            />
+          ) : (
+            <EmptyState
+              title={t("farmer.noAdvisoryTitle")}
+              description={t("farmer.noAdvisoryDescription", {
+                panchayat: selectedPanchayat,
+              })}
+            />
+          )}
 
-      <PreparednessCard alerts={alerts} />
+          <EnvironmentalConditionCards
+            current={todaysWeather}
+            soilMoistureDeficit={currentSoilDeficit}
+          />
 
-      <FiveDayForecast days={fiveDayForecast} />
+          <TodaysActionCard actionCard={actionCard} />
 
-      <RainChanceToday dayparts={rainByDaypart} />
+          <GeneralRecommendationsCard />
 
-      <SoilMoistureGaugeCard soilMoistureDeficit={currentSoilDeficit} />
-
-      <WeeklyOperationsOutlook days={operationsOutlook} />
-
-      <CropThresholdOutlook crop={selectedCrop} days={cropOutlook} />
-
-      <TodaysWeatherCard current={todaysWeather} />
-
-      <HourlyRainProbabilityCard hours={hourlyRain} />
-
-      <HeatColdStressCard heatColdStress={heatColdStress} />
-
-      <PestDiseaseCard pestDiseaseRisk={pestDiseaseRisk} />
-
-      <IrrigationScheduleCard days={irrigationSchedule} />
-
-      <RainfallReportCard panchayat={selectedPanchayat} />
-
-      {cachedAdvisory ? (
-        <AdvisorySection
-          advisory={cachedAdvisory}
-          panchayat={selectedPanchayat}
-          t={t}
-        />
+          <FarmerAlerts alerts={alerts} />
+        </div>
       ) : (
-        <EmptyState
-          title={t("farmer.noAdvisoryTitle")}
-          description={t("farmer.noAdvisoryDescription", {
-            panchayat: selectedPanchayat,
-          })}
-        />
+        <div className="space-y-6">
+          <FiveDayForecastChart days={fiveDayForecast} />
+
+          <StressBreakdownChart
+            current={todaysWeather}
+            soilMoistureDeficit={currentSoilDeficit}
+          />
+
+          <FiveDayForecast days={fiveDayForecast} />
+
+          <RainChanceToday dayparts={rainByDaypart} />
+
+          <SoilMoistureGaugeCard soilMoistureDeficit={currentSoilDeficit} />
+
+          <CropThresholdOutlook crop={selectedCrop} days={cropOutlook} />
+
+          <TodaysWeatherCard current={todaysWeather} />
+
+          <HourlyRainProbabilityCard hours={hourlyRain} />
+
+          <HeatColdStressCard heatColdStress={heatColdStress} />
+
+          <PestDiseaseCard pestDiseaseRisk={pestDiseaseRisk} />
+
+          <IrrigationScheduleCard days={irrigationSchedule} />
+
+          <RainfallReportCard panchayat={selectedPanchayat} />
+        </div>
       )}
     </main>
   );
 }
 
 function AdvisorySection({ advisory, panchayat, t }) {
+  const { i18n } = useTranslation();
   const content = getLatestVersionContent(advisory);
+  const completedActionKeys = useFarmerStore(
+    (state) => state.completedActionKeys,
+  );
+  const toggleActionCompleted = useFarmerStore(
+    (state) => state.toggleActionCompleted,
+  );
+
+  const completedCount = content.actions.filter((_, index) =>
+    completedActionKeys.includes(`${advisory.id}:${index}`),
+  ).length;
+  const totalCount = content.actions.length;
+  const progressPct = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <p className="text-xs uppercase tracking-wide text-foreground/40">
-          {panchayat} — {advisory.crop} ({advisory.cropStage})
+          {panchayat} — {t(`farmer.crops.${advisory.crop}`, advisory.crop)}
         </p>
         <p className="mt-1 text-xs text-foreground/50">
           {t("farmer.published", {
             time: formatHourLabel(
               new Date(getLatestVersionTimestamp(advisory)),
+              i18n.language,
             ),
           })}
         </p>
@@ -269,30 +311,71 @@ function AdvisorySection({ advisory, panchayat, t }) {
       <Card>
         <div className="flex items-start justify-between gap-3">
           <p className="text-sm">{content.summary}</p>
-          <ReadAloudButton text={content.summary} />
+          <ReadAloudButton
+            text={content.summary}
+            lang={content.language === "hi" ? "hi-IN" : "en-IN"}
+          />
         </div>
       </Card>
 
+      <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-semibold">
+            {t("farmer.advisoryProgress.title")}
+          </p>
+          <p className="text-sm font-bold text-primary">
+            {completedCount} / {totalCount}
+          </p>
+        </div>
+        <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full rounded-full bg-primary transition-all duration-500"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+      </div>
+
       <section className="space-y-3">
-        {content.actions.map((action, index) => (
-          <div key={index} className="rounded-lg border border-border p-4 ">
-            <div className="flex items-center gap-2">
-              <span
-                className="h-2.5 w-2.5 shrink-0 rounded-full"
-                style={{
-                  backgroundColor:
-                    PRIORITY_TO_RISK_COLOR[action.priority] ??
-                    RISK_COLORS.green,
-                }}
-                aria-hidden="true"
+        {content.actions.map((action, index) => {
+          const key = `${advisory.id}:${index}`;
+          const done = completedActionKeys.includes(key);
+          return (
+            <label
+              key={index}
+              className="flex items-start gap-3 rounded-lg border border-border bg-surface p-4 shadow-sm cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                checked={done}
+                onChange={() => toggleActionCompleted(advisory.id, index)}
+                className="mt-1 h-5 w-5 shrink-0 accent-primary"
               />
-              <p className="text-base font-semibold">{action.title}</p>
-            </div>
-            <p className="mt-1 text-sm text-foreground/70">
-              {action.description}
-            </p>
-          </div>
-        ))}
+              <div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="h-2.5 w-2.5 shrink-0 rounded-full"
+                    style={{
+                      backgroundColor:
+                        PRIORITY_TO_RISK_COLOR[action.priority] ??
+                        RISK_COLORS.green,
+                    }}
+                    aria-hidden="true"
+                  />
+                  <p
+                    className={`text-base font-semibold ${done ? "text-foreground/40 line-through" : ""}`}
+                  >
+                    {action.title}
+                  </p>
+                </div>
+                <p
+                  className={`mt-1 text-sm ${done ? "text-foreground/30 line-through" : "text-foreground/70"}`}
+                >
+                  {action.description}
+                </p>
+              </div>
+            </label>
+          );
+        })}
       </section>
 
       <Card className="text-xs text-foreground/50">

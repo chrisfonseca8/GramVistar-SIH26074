@@ -51,8 +51,7 @@ function concernLevel(layerKey, result) {
  * panchayat-level operational briefing, not a crop-specific one. No
  * crop/crop-stage/timeline is involved (unlike the Farmer advisory's
  * input): this reuses the app's own real hazard, alert and vulnerability
- * calculations for "now", the same numbers the Risk Maps and Disaster
- * Management pages show.
+ * calculations for "now", the same numbers the Risk Maps page shows.
  *
  * Covers: water/irrigation availability, every tracked hazard (drought,
  * flood, heatwave, cold wave, pest/disease, crop health), active alerts,

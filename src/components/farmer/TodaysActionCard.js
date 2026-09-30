@@ -53,7 +53,7 @@ function ActionTile({ label, result }) {
     <div className="rounded-lg border border-border p-4 text-center ">
       <p className="text-sm font-medium text-foreground/70">{label}</p>
       <p
-        className={`mt-2 text-2xl font-bold ${result.decision ? "text-green-600 dark:text-green-400" : "text-foreground/70"}`}
+        className={`mt-2 text-2xl font-bold ${result.decision ? "text-green-600" : "text-foreground/70"}`}
       >
         {result.decision
           ? t("farmer.actionCard.yes")

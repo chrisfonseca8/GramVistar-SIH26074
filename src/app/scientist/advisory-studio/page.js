@@ -27,7 +27,6 @@ import { getLatestVersionTimestamp } from "@/data/selectors/publishedAdvisories"
 import { isMockMode } from "@/lib/advisory/config";
 import { DEFAULT_CROP_THRESHOLDS } from "@/data/cropThresholds";
 import { selectEffectiveCropThresholds } from "@/data/effectiveThresholds";
-import { estimateCropStage } from "@/lib/calculations/cropStageEstimate";
 import { formatHourLabel } from "@/lib/formatters";
 
 const PRIORITY_OPTIONS = ["Low", "Medium", "High"];
@@ -46,7 +45,7 @@ const AUDIENCES = [
     key: "authority",
     label: "Authority Advisory (DM/DC)",
     description:
-      "Operational/resource briefing over the same conditions, published to the Government portal.",
+      "Panchayat-wide operational/resource briefing — irrigation/water, hazards and alerts — published to the Government portal.",
   },
 ];
 
@@ -137,7 +136,6 @@ export default function AdvisoryStudioPage() {
   const endDate = endDateStr
     ? new Date(`${endDateStr}T23:59:59Z`)
     : forecastMaxDate;
-  const cropStage = estimateCropStage(crop, startDate);
 
   function buildCurrentInput() {
     if (selectedAudience === "authority") {
@@ -150,7 +148,6 @@ export default function AdvisoryStudioPage() {
       data,
       panchayat: selectedPanchayat,
       crop,
-      cropStage,
       dateRange: { start: startDate, end: endDate },
       cropThresholdsList: effectiveThresholds,
     });
@@ -178,7 +175,7 @@ export default function AdvisoryStudioPage() {
         </p>
       </div>
 
-      <section className="rounded-lg border border-border p-5 ">
+      <section className="rounded-lg border border-border bg-surface p-5 shadow-sm">
         <h2 className="text-sm font-semibold">Send this advisory to</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {AUDIENCES.map((audience) => (
@@ -203,7 +200,7 @@ export default function AdvisoryStudioPage() {
       </section>
 
       {activeAudience?.key === "farmer" ? (
-        <section className="rounded-lg border border-border p-5 ">
+        <section className="rounded-lg border border-border bg-surface p-5 shadow-sm">
           <h2 className="text-sm font-semibold">Advisory Input</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <label className="flex flex-col gap-1 text-sm">
@@ -258,27 +255,6 @@ export default function AdvisoryStudioPage() {
         </section>
       ) : null}
 
-      {activeAudience?.key === "authority" ? (
-        <section className="rounded-lg border border-border p-5 ">
-          <h2 className="text-sm font-semibold">Advisory Input</h2>
-          <p className="mt-2 text-sm text-foreground/60">
-            Drafted for {selectedPanchayat} as a whole — irrigation/drinking
-            water, every tracked hazard, active alerts and the
-            panchayat&apos;s vulnerability ranking. No crop, stage or
-            timeline is needed.
-          </p>
-          <div className="mt-4">
-            <button
-              type="button"
-              onClick={handlePreviewInput}
-              className="rounded-full border border-border px-5 py-2 text-sm font-medium transition hover:border-border-hover "
-            >
-              Preview advisory input (JSON)
-            </button>
-          </div>
-        </section>
-      ) : null}
-
       {activeAudience ? (
         <AdvisoryAudiencePanel
           key={activeAudience.key}
@@ -287,7 +263,6 @@ export default function AdvisoryStudioPage() {
           audienceDescription={activeAudience.description}
           selectedPanchayat={selectedPanchayat}
           crop={crop}
-          cropStage={cropStage}
           startDate={startDate}
           endDate={endDate}
           buildCurrentInput={buildCurrentInput}
@@ -302,8 +277,8 @@ export default function AdvisoryStudioPage() {
         title="Structured advisory input"
       >
         <p className="mb-3 text-xs text-foreground/50">
-          This is the exact payload sent to Gemini/mock — no
-          farmer-identifying data, panchayat-level data only.
+          This is the exact payload sent to Gemini/mock — no farmer-identifying
+          data, panchayat-level data only.
         </p>
         <pre className="max-h-[60vh] overflow-auto rounded-md bg-muted p-3 text-xs ">
           {JSON.stringify(previewInput, null, 2)}
@@ -319,7 +294,6 @@ function AdvisoryAudiencePanel({
   audienceDescription,
   selectedPanchayat,
   crop,
-  cropStage,
   startDate,
   endDate,
   buildCurrentInput,
@@ -380,7 +354,6 @@ function AdvisoryAudiencePanel({
     const id = createDraft({
       panchayat: selectedPanchayat,
       crop: audience === "authority" ? null : crop,
-      cropStage: audience === "authority" ? null : cropStage,
       dateRange:
         audience === "authority"
           ? null
@@ -524,12 +497,10 @@ function AdvisoryAudiencePanel({
     <section className="space-y-4 rounded-xl border border-border p-5">
       <div>
         <h2 className="text-base font-semibold">{audienceLabel}</h2>
-        <p className="mt-1 text-xs text-foreground/50">
-          {audienceDescription}
-        </p>
+        <p className="mt-1 text-xs text-foreground/50">{audienceDescription}</p>
       </div>
 
-      <div className="rounded-lg border border-border p-5 ">
+      <div className="rounded-lg border border-border bg-surface p-5 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-sm font-semibold">
             {generationResult
@@ -580,7 +551,7 @@ function AdvisoryAudiencePanel({
           </p>
         ) : !parseResult?.success ? (
           <div
-            className="mt-3 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400"
+            className="mt-3 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700"
             role="alert"
           >
             <p className="font-medium">
@@ -671,8 +642,7 @@ function AdvisoryEditForm({
   onRemoveReason,
   onAddReason,
 }) {
-  const inputClass =
-    "rounded-md border border-border bg-surface px-2 py-1.5 ";
+  const inputClass = "rounded-md border border-border bg-surface px-2 py-1.5 ";
 
   return (
     <div className="mt-4 space-y-5">
@@ -906,7 +876,13 @@ function WorkflowSection({
 }) {
   const actions =
     advisory.status === "Draft"
-      ? [{ label: "Move to review", onClick: onMoveToReview, variant: "primary" }]
+      ? [
+          {
+            label: "Move to review",
+            onClick: onMoveToReview,
+            variant: "primary",
+          },
+        ]
       : advisory.status === "Review"
         ? [
             { label: "Approve", onClick: onApprove, variant: "primary" },
@@ -925,15 +901,13 @@ function WorkflowSection({
             : [];
 
   return (
-    <section className="rounded-lg border border-border p-5 ">
+    <section className="rounded-lg border border-border bg-surface p-5 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold">
-            {audienceLabel} Workflow
-          </h3>
+          <h3 className="text-sm font-semibold">{audienceLabel} Workflow</h3>
           <p className="mt-1 text-xs text-foreground/50">
             {advisory.panchayat}
-            {advisory.crop ? ` · ${advisory.crop} (${advisory.cropStage})` : ""}
+            {advisory.crop ? ` · ${advisory.crop}` : ""}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -949,7 +923,7 @@ function WorkflowSection({
                   onClick={action.onClick}
                   className={
                     action.variant === "danger"
-                      ? "rounded-full border border-red-300 px-4 py-1.5 text-xs font-medium text-red-700 transition hover:border-red-500 dark:border-red-900/60 dark:text-red-400"
+                      ? "rounded-full border border-red-300 px-4 py-1.5 text-xs font-medium text-red-700 transition hover:border-red-500"
                       : "rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground transition hover:opacity-90"
                   }
                 >
@@ -1053,7 +1027,7 @@ function DiffView({ previous, current }) {
               ? JSON.stringify(change.before)
               : String(change.before ?? "—")}
           </p>
-          <p className="text-green-700 dark:text-green-500">
+          <p className="text-green-700">
             {typeof change.after === "object"
               ? JSON.stringify(change.after)
               : String(change.after ?? "—")}
@@ -1077,18 +1051,17 @@ function DeliveryPreviewSection({ advisory }) {
   const meta = {
     panchayat: advisory.panchayat,
     crop: advisory.crop ?? undefined,
-    cropStage: advisory.cropStage ?? undefined,
     audience: advisory.audience,
     publishedAt: formatHourLabel(new Date(getLatestVersionTimestamp(advisory))),
   };
   const text = CHANNEL_FORMATTERS[channel](content, meta);
 
   return (
-    <section className="rounded-lg border border-border p-5 ">
+    <section className="rounded-lg border border-border bg-surface p-5 shadow-sm">
       <h3 className="text-sm font-semibold">Delivery Previews</h3>
       <p className="mt-1 text-xs text-foreground/50">
-        Simulations only — no message is actually sent over any channel;
-        there is no real SMS/IVR/WhatsApp integration in this prototype.
+        Simulations only — no message is actually sent over any channel; there
+        is no real SMS/IVR/WhatsApp integration in this prototype.
       </p>
 
       <div className="mt-4 flex gap-1 border-b border-border ">

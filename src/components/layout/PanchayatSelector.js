@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { useDataStore } from "@/store/dataStore";
 import { useSelectionStore } from "@/store/selectionStore";
 
@@ -11,6 +12,7 @@ const BLOCK_VALUE = "__block__";
  * GeoJSON (never a hardcoded list, so it can't drift from the real data).
  */
 export function PanchayatSelector() {
+  const { t } = useTranslation();
   const status = useDataStore((state) => state.status);
   const panchayats = useDataStore((state) => state.data?.panchayats ?? []);
   const selected = useSelectionStore((state) => state.selectedPanchayat);
@@ -24,8 +26,8 @@ export function PanchayatSelector() {
       >
         <option>
           {status === "error"
-            ? "Panchayats unavailable"
-            : "Loading panchayats…"}
+            ? t("common.panchayatsUnavailable")
+            : t("common.loadingPanchayats")}
         </option>
       </select>
     );
@@ -39,9 +41,9 @@ export function PanchayatSelector() {
         setSelected(value === BLOCK_VALUE ? null : value);
       }}
       className="cursor-pointer rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-foreground"
-      aria-label="Selected panchayat"
+      aria-label={t("common.selectedPanchayat")}
     >
-      <option value={BLOCK_VALUE}>Chas Block</option>
+      <option value={BLOCK_VALUE}>{t("common.chasBlock")}</option>
       {panchayats.map((panchayat) => (
         <option key={panchayat} value={panchayat}>
           {panchayat}

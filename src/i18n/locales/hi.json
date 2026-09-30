@@ -13,7 +13,13 @@
     "loading": "लोड हो रहा है…",
     "loadFailedTitle": "स्थानीय डेटा लोड नहीं हो सका",
     "nothingToShow": "अभी दिखाने के लिए कुछ नहीं है",
-    "somethingWrong": "कुछ गड़बड़ हो गई"
+    "somethingWrong": "कुछ गड़बड़ हो गई",
+    "unknown": "अज्ञात",
+    "offline": "आप ऑफ़लाइन प्रतीत होते हैं — सबसे हाल ही में लोड किया गया डेटा दिखाया जा रहा है।",
+    "chasBlock": "चास ब्लॉक",
+    "loadingPanchayats": "पंचायतें लोड हो रही हैं…",
+    "panchayatsUnavailable": "पंचायतें अनुपलब्ध हैं",
+    "selectedPanchayat": "चयनित पंचायत"
   },
   "breadcrumb": {
     "scientist": "वैज्ञानिक / केवीके",
@@ -33,12 +39,8 @@
     "government.overview": "अवलोकन",
     "government.climateOverview": "जलवायु अवलोकन",
     "government.riskMaps": "जोखिम मानचित्र",
-    "government.operations": "संचालन",
-    "government.disasterModules": "आपदा प्रबंधन",
-    "government.reports": "रिपोर्ट",
-    "government.alertEscalation": "चेतावनी वृद्धि",
-    "government.drillMode": "अभ्यास मोड",
-    "government.coordination": "समन्वय"
+    "government.reliefResourceAllocator": "राहत एवं संसाधन आवंटक",
+    "government.alertEscalation": "चेतावनी वृद्धि"
   },
   "login": {
     "title": "लॉग इन करें",
@@ -79,10 +81,85 @@
     "offlineCached": "आपकी अंतिम सहेजी गई सलाह दिखाई जा रही है — अभी स्थानीय डेटा तक नहीं पहुंचा जा सका।",
     "why": "कारण",
     "confidence": "विश्वास स्तर: {{confidence}}",
+    "tabs": {
+      "today": "आज एवं कार्रवाई",
+      "weather": "मौसम एवं विश्लेषण"
+    },
     "cropLabel": "फसल",
-    "cropStageLabel": "फसल अवस्था",
     "selectCrop": "फसल चुनें",
-    "selectCropStage": "अवस्था चुनें",
+    "crops": {
+      "Rice": "चावल",
+      "Maize": "मक्का",
+      "Mustard": "सरसों"
+    },
+    "cropStages": {
+      "Sowing": "बुवाई",
+      "Vegetative": "वानस्पतिक वृद्धि",
+      "Flowering": "फूल आना",
+      "Maturity": "पकना",
+      "Harvest": "कटाई"
+    },
+    "cropSelectionCard": {
+      "title": "अपनी फसल चुनें",
+      "description": "नीचे दिए गए आज के तापमान पूर्वानुमान के फसल-विशिष्ट भाग को यह तय करता है।"
+    },
+    "advisoryProgress": {
+      "title": "सलाह कार्य प्रगति"
+    },
+    "conditions": {
+      "soilMoisture": "मिट्टी की नमी",
+      "sprayWindow": "छिड़काव विंडो",
+      "favorable": "अनुकूल",
+      "unfavorable": "प्रतिकूल",
+      "goAhead": "आगे बढ़ें",
+      "holdOff": "रुकें",
+      "soilStatus": {
+        "sufficient": "पर्याप्त",
+        "gettingDry": "सूखने लगी है",
+        "needsWater": "पानी चाहिए"
+      },
+      "humidityStatus": {
+        "fungalRisk": "फफूंद जोखिम",
+        "elevated": "बढ़ी हुई",
+        "normal": "सामान्य"
+      },
+      "windStatus": {
+        "caution": "सावधानी",
+        "calm": "शांत"
+      }
+    },
+    "forecastChart": {
+      "title": "5-दिन का पूर्वानुमान: तापमान और वर्षा",
+      "rainfall": "वर्षा (मिमी)",
+      "maxTemp": "अधिकतम तापमान (°C)",
+      "temperatureAxis": "तापमान (°C)"
+    },
+    "stressBreakdown": {
+      "title": "वायुमंडलीय एवं मृदा तनाव",
+      "unavailable": "वर्तमान घंटे का डेटा उपलब्ध नहीं है",
+      "humidity": "नमी (%)",
+      "soilDeficit": "मिट्टी की कमी (m³/m³ ×100)",
+      "wind": "हवा (किमी/घंटा)"
+    },
+    "alertsDetail": {
+      "frostType": "पाला जोखिम",
+      "heavyRainType": "भारी बारिश की संभावना",
+      "heatStressType": "गर्मी का तनाव",
+      "frostMessage": "पाला {{level}} — वर्तमान तापमान {{tempC}}°C",
+      "heavyRainMessage": "इस घंटे {{pct}}% बारिश की संभावना",
+      "heatStressMessage": "ताप सूचकांक {{value}}°C"
+    },
+    "generalRecommendations": {
+      "title": "सामान्य सिफारिशें",
+      "disclaimer": "सामान्य अच्छी प्रथाओं के सुझाव — आज के पूर्वानुमान या आपकी पंचायत के लिए विशिष्ट नहीं।",
+      "tips": [
+        "हर मौसम में फसल चक्र अपनाएं ताकि मिट्टी की उर्वरता बनी रहे और कीटों का प्रकोप कम हो।",
+        "अपनी मिट्टी की समय-समय पर जांच करवाएं ताकि खाद केवल आवश्यकता होने पर ही डाली जाए।",
+        "कटी हुई फसल को सूखे और कीट-रोधी पात्र में रखें ताकि कटाई के बाद होने वाला नुकसान कम हो।",
+        "भारी बारिश के दौरान अतिरिक्त पानी निकल सके, इसके लिए खेत की मेड़ों को साफ रखें।",
+        "सप्ताह के लिए छिड़काव या कटाई की योजना बनाने से पहले मौसम अपडेट जरूर देखें।"
+      ]
+    },
     "actionCard": {
       "title": "आज की कार्रवाई",
       "irrigate": "सिंचाई करें",
@@ -112,12 +189,6 @@
     "soilMoisture": {
       "title": "मिट्टी की नमी",
       "description": "अभी आपकी मिट्टी कितनी सूखी है। हरा = ठीक है, पीला = सूखने लगी है, लाल = जल्द पानी चाहिए।"
-    },
-    "operationsOutlook": {
-      "title": "इस सप्ताह: छिड़काव और सिंचाई",
-      "spray": "छिड़काव",
-      "irrigate": "सिंचाई",
-      "frost": "पाला"
     },
     "cropOutlook": {
       "title": "तापमान बनाम {{crop}}",
@@ -179,7 +250,8 @@
         "stop": "रोकें",
         "remove": "हटाएं",
         "unsupported": "इस ब्राउज़र में आवाज़ रिकॉर्डिंग समर्थित नहीं है।",
-        "permissionDenied": "माइक्रोफ़ोन एक्सेस अस्वीकृत या अनुपलब्ध था।"
+        "permissionDenied": "माइक्रोफ़ोन एक्सेस अस्वीकृत या अनुपलब्ध था।",
+        "stopWithSeconds": "रोकें ({{seconds}} से)"
       },
       "submit": "प्रतिक्रिया भेजें",
       "submitAnother": "एक और भेजें",
@@ -217,12 +289,6 @@
       "yield": {
         "expected": "अपेक्षित उपज (क्विंटल/एकड़)"
       }
-    },
-    "preparedness": {
-      "title": "तैयारी अंक",
-      "level": "स्तर: {{level}}",
-      "markPrepared": "तैयार के रूप में चिह्नित करें",
-      "done": "तैयार ✓"
     },
     "readAloud": {
       "play": "ज़ोर से पढ़ें",

@@ -57,9 +57,7 @@ export function FarmerOtpLogin({ onVerified, onCancel }) {
             className="rounded-md border border-border bg-surface px-3 py-2 text-sm "
           />
         </label>
-        {error ? (
-          <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
-        ) : null}
+        {error ? <p className="text-xs text-red-600">{error}</p> : null}
         <Button
           type="submit"
           variant="primary"
@@ -96,9 +94,7 @@ export function FarmerOtpLogin({ onVerified, onCancel }) {
           className="rounded-md border border-border bg-surface px-3 py-2 text-center text-lg tracking-[0.5em] "
         />
       </label>
-      {error ? (
-        <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
-      ) : null}
+      {error ? <p className="text-xs text-red-600">{error}</p> : null}
       <Button
         type="submit"
         variant="primary"

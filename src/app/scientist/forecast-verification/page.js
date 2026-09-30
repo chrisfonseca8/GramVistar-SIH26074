@@ -93,7 +93,7 @@ export default function ForecastVerificationPage() {
 function VariablePanel({ title, series }) {
   if (!series.available) {
     return (
-      <div className="rounded-lg border border-border p-4 ">
+      <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
         <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground/50">
           {title}
         </h3>
@@ -103,7 +103,7 @@ function VariablePanel({ title, series }) {
   }
 
   return (
-    <div className="rounded-lg border border-border p-4 ">
+    <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
       <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground/50">
         {title}
       </h3>
@@ -136,7 +136,7 @@ function VariablePanel({ title, series }) {
 function SideBySideSection({ data, selectedPanchayat, variableLabel }) {
   if (!selectedPanchayat) {
     return (
-      <section className="rounded-lg border border-border p-5 ">
+      <section className="rounded-lg border border-border bg-surface p-5 shadow-sm">
         <h2 className="text-sm font-semibold">Historical vs. Forecast</h2>
         <div className="mt-4">
           <EmptyState
@@ -158,21 +158,29 @@ function SideBySideSection({ data, selectedPanchayat, variableLabel }) {
     panchayat: selectedPanchayat,
     variableLabel,
   });
+  const hasHistorical = historicalSeries.available;
 
   return (
-    <section className="rounded-lg border border-border p-5 ">
+    <section className="rounded-lg border border-border bg-surface p-5 shadow-sm">
       <h2 className="text-sm font-semibold">
         Historical vs. Forecast — {selectedPanchayat}
       </h2>
       <p className="mt-1 text-xs text-foreground/50">
         Drag each chart&apos;s bottom range slider to zoom into a period.
         Historical is monthly (10 years); forecast is hourly (7 days).
+        {!hasHistorical
+          ? ` ${variableLabel} has no historical data source, so only the forecast is shown.`
+          : ""}
       </p>
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <VariablePanel
-          title={`Historical (monthly) — ${variableLabel}`}
-          series={historicalSeries}
-        />
+      <div
+        className={`mt-4 grid gap-4 ${hasHistorical ? "md:grid-cols-2" : ""}`}
+      >
+        {hasHistorical ? (
+          <VariablePanel
+            title={`Historical (monthly) — ${variableLabel}`}
+            series={historicalSeries}
+          />
+        ) : null}
         <VariablePanel
           title={`Forecast (hourly) — ${variableLabel}`}
           series={forecastSeries}
@@ -202,7 +210,7 @@ function SpatialAnimationSection({ data, variableLabel }) {
 
   if (!gridResult.available) {
     return (
-      <section className="rounded-lg border border-border p-5 ">
+      <section className="rounded-lg border border-border bg-surface p-5 shadow-sm">
         <h2 className="text-sm font-semibold">
           Forecast Animation — All Panchayats
         </h2>
@@ -217,7 +225,7 @@ function SpatialAnimationSection({ data, variableLabel }) {
   const currentValues = gridResult.grid.map((row) => row[frameIndex]);
 
   return (
-    <section className="rounded-lg border border-border p-5 ">
+    <section className="rounded-lg border border-border bg-surface p-5 shadow-sm">
       <h2 className="text-sm font-semibold">
         Forecast Animation — All Panchayats — {variableLabel}
       </h2>

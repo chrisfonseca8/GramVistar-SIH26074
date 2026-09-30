@@ -1,9 +1,7 @@
 const TONE_CLASSES = {
   info: "border-border text-foreground/70",
-  warning:
-    "border-yellow-300 bg-yellow-50 text-yellow-800 dark:border-yellow-900/50 dark:bg-yellow-950/30 dark:text-yellow-400",
-  danger:
-    "border-red-300 bg-red-50 text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400",
+  warning: "border-yellow-300 bg-yellow-50 text-yellow-800",
+  danger: "border-red-300 bg-red-50 text-red-700",
 };
 
 /**

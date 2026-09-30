@@ -2,15 +2,7 @@
 
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/Card";
-import { formatPercent } from "@/lib/formatters";
-
-function formatHourOnly(date) {
-  return date.toLocaleTimeString("en-IN", {
-    hour: "numeric",
-    hour12: true,
-    timeZone: "UTC",
-  });
-}
+import { formatHourOnly, formatPercent } from "@/lib/formatters";
 
 /**
  * Hourly Rain Probability card — genuinely hour-by-hour,
@@ -19,7 +11,7 @@ function formatHourOnly(date) {
  * targets" requirement specifically).
  */
 export function HourlyRainProbabilityCard({ hours }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
     <Card title={t("farmer.hourlyRain.title")}>
@@ -32,9 +24,9 @@ export function HourlyRainProbabilityCard({ hours }) {
             <span className="text-xs text-foreground/50">
               {index === 0
                 ? t("farmer.hourlyRain.now")
-                : formatHourOnly(hour.date)}
+                : formatHourOnly(hour.date, i18n.language)}
             </span>
-            <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+            <span className="text-sm font-semibold text-blue-600">
               {formatPercent(hour.rainProbabilityPct)}
             </span>
           </div>

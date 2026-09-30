@@ -2,7 +2,7 @@
 
 An **agro-meteorological decision-support platform** for Chas Block, Bokaro District, Jharkhand.
 
-The platform transforms seeded weather and environmental data into panchayat-level diagnostics, crop decision support, alerts, advisories, disaster-management views, and rural-development workflows for three user groups:
+The platform transforms seeded weather and environmental data into panchayat-level diagnostics, crop decision support, alerts, and advisories for three user groups:
 
 - **Scientist / KVK**
 - **Farmer**
@@ -244,7 +244,7 @@ risk state
 
 ### Purpose
 
-Provide operational and spatial information for planning, disaster response, resource allocation, and rural development.
+Provide operational and spatial information for planning and resource allocation.
 
 ### Roles
 
@@ -256,14 +256,8 @@ Provide operational and spatial information for planning, disaster response, res
 - drought/flood/heat/cold risk maps,
 - crop health,
 - water availability,
-- road accessibility,
-- population vulnerability,
-- relief allocation,
-- warning dissemination,
-- action tracking,
-- disaster-management modules,
-- rural-development modules,
-- situation reports.
+- Gemini/mock-generated relief & resource allocation per published advisory,
+- alert escalation.
 
 ---
 
@@ -455,10 +449,8 @@ Gemini is optional and must have a stub mode.
 
 ## Used for
 
-- Scientist advisory drafting
-- Government situation reports
-- Disaster bulletins
-- Resource/action summaries
+- Scientist advisory drafting (Farmer and Government/DM-DC advisories)
+- Government relief/resource allocation drafting (Relief & Resource Allocator)
 - Optional animation-code generation
 
 ## Not used for
@@ -637,7 +629,7 @@ NEXT_PUBLIC_USE_STUB_LLM=true
 NEXT_PUBLIC_GEMINI_API_KEY=
 ```
 
-- **Default / recommended:** leave `.env.local` absent, or `NEXT_PUBLIC_USE_STUB_LLM=true`. Every advisory/report generation feature (Scientist Advisory Studio, Government Reports) uses a deterministic mock generator that produces real, schema-valid content from the app's own real computed data — no network call, no API key needed. This is how every feature in this app has actually been verified throughout development.
+- **Default / recommended:** leave `.env.local` absent, or `NEXT_PUBLIC_USE_STUB_LLM=true`. The advisory generation feature (Scientist Advisory Studio) uses a deterministic mock generator that produces real, schema-valid content from the app's own real computed data — no network call, no API key needed. This is how every feature in this app has actually been verified throughout development.
 - **Live Gemini (untested in this environment):** set `NEXT_PUBLIC_USE_STUB_LLM=false` and provide a real `NEXT_PUBLIC_GEMINI_API_KEY`. Both conditions must be true for live mode — an explicit `false` with no key still safely falls back to mock (see `src/lib/advisory/config.js`'s `isMockMode()`).
 
 > A browser-exposed API key is not suitable for production — this is a prototype-only pattern. Production live-LLM access should use a server-side secret boundary, which is outside this project's current scope. Never commit `.env.local` (it's git-ignored).
@@ -762,10 +754,8 @@ Short, role-specific guides. None of these require reading any code — just log
 2. **Overview** lists every published advisory across all panchayats.
 3. **Climate Overview** shows block-wide elevation, temperature-vs-elevation, and vulnerability context.
 4. **Risk Maps** — pick one of 7 hazard layers (Drought/Flood/Heatwave/Cold Wave/Pest-Disease/Crop Health/Water) to see it as a panchayat choropleth with a legend; click a panchayat for its exact value.
-5. **Disaster Management** — per-hazard checklists of response measures (grains, water tankers, shelters, cooling centers, etc.), shown alongside each panchayat's real current severity for that hazard. Checking a box only records it locally — it's a simulation, not a real dispatch.
-6. **Reports** — generate a Situation Report, Disaster Bulletin, Resource Plan, Vulnerability Summary, or Action Checklist (mock or live Gemini), scoped to the whole block or one panchayat.
-7. **Alert Escalation** — escalate/de-escalate any active alert across Green/Yellow/Orange/Red, and preview how it would go out over SMS/IVR/WhatsApp/push (all simulated).
-8. **Operations** — a relief-allocation calculator (enter a supply total, see it split by relative need), simulated warning-delivery status per alert, and a 4-column action-tracking Kanban board.
+5. **Alert Escalation** — escalate/de-escalate any active alert across Green/Yellow/Orange/Red, and preview how it would go out over SMS/IVR/WhatsApp/push (all simulated).
+6. **Relief & Resource Allocator** — pick a published, DM/DC-approved advisory and generate a relief/resource allocation for that panchayat (mock or live Gemini), built from the advisory's own content plus the panchayat's current hazard data. Every generation is kept in a running history below, not just the latest one.
 
 ---
 

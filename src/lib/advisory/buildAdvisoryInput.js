@@ -22,7 +22,7 @@ function withinRange(date, start, end) {
 /**
  * Assembles the structured advisory input object — the
  * payload the Gemini/mock generation step will consume.
- * Contains only panchayat/crop/stage/aggregate-weather/thresholds, never
+ * Contains only panchayat/crop/aggregate-weather/thresholds, never
  * farmer PII — there is no per-farmer data anywhere in
  * this app yet, so that's true by construction, not extra filtering here.
  *
@@ -34,7 +34,6 @@ function withinRange(date, start, end) {
  * data: object,
  * panchayat: string,
  * crop: string,
- * cropStage: string,
  * dateRange: { start: Date, end: Date },
  * cropThresholdsList?: typeof DEFAULT_CROP_THRESHOLDS,
  * }} params `cropThresholdsList` defaults to the unedited defaults; pass
@@ -46,7 +45,6 @@ export function buildAdvisoryInput({
   data,
   panchayat,
   crop,
-  cropStage,
   dateRange,
   cropThresholdsList = DEFAULT_CROP_THRESHOLDS,
 }) {
@@ -81,7 +79,6 @@ export function buildAdvisoryInput({
   return {
     panchayat,
     crop,
-    cropStage,
     dateRange: {
       start: dateRange.start.toISOString(),
       end: dateRange.end.toISOString(),

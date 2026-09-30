@@ -4,9 +4,13 @@ import {
   buildAdvisoryUserPrompt,
   buildAuthorityAdvisoryUserPrompt,
 } from "@/lib/prompts/advisoryPrompt";
+import {
+  RELIEF_ALLOCATION_SYSTEM_PROMPT,
+  buildReliefAllocationUserPrompt,
+} from "@/lib/prompts/reliefAllocationPrompt";
 
-const MODEL = "gemini-2.5-flash";
-const TIMEOUT_MS = 30000;
+const MODEL = "gemini-3.8-flash";
+const TIMEOUT_MS = 30000000;
 
 /**
  * The generic "call Gemini with a system + user prompt" primitive —
@@ -15,8 +19,8 @@ const TIMEOUT_MS = 30000;
  * outage can never break the rest of the app.
  *
  * This is the one piece of actual Gemini-SDK/streaming/abort/error
- * logic in the app. `callGeminiForAdvisory` (below) and
- * `callGeminiForReport` (`src/lib/reports/`) are both thin wrappers
+ * logic in the app. `callGeminiForAdvisory` and
+ * `callGeminiForReliefAllocation` (below) are both thin wrappers
  * around this, reusing the same Gemini abstraction rather than
  * duplicating API logic.
  *
@@ -100,6 +104,23 @@ export async function callGeminiForAdvisory(
       audience === "authority"
         ? buildAuthorityAdvisoryUserPrompt(advisoryInput)
         : buildAdvisoryUserPrompt(advisoryInput),
+    onStreamChunk: options.onStreamChunk,
+  });
+}
+
+/**
+ * Relief/resource-allocation-specific wrapper around `callGemini()`.
+ * @param {object} reliefAllocationInput the output of `buildReliefAllocationInput()`
+ * @param {{ onStreamChunk?: (text: string) => void }} [options]
+ * @returns {Promise<{ ok: true, rawText: string } | { ok: false, error: string }>}
+ */
+export async function callGeminiForReliefAllocation(
+  reliefAllocationInput,
+  options = {},
+) {
+  return callGemini({
+    systemPrompt: RELIEF_ALLOCATION_SYSTEM_PROMPT,
+    userPrompt: buildReliefAllocationUserPrompt(reliefAllocationInput),
     onStreamChunk: options.onStreamChunk,
   });
 }

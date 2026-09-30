@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileNav } from "@/components/layout/MobileNav";
@@ -22,6 +23,7 @@ import { useOnlineStatus } from "@/hooks/useOnlineStatus";
  * existing page's behavior.
  */
 export function PortalShell({ portalTitle, navItems, children }) {
+  const { t } = useTranslation();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const online = useOnlineStatus();
 
@@ -35,9 +37,7 @@ export function PortalShell({ portalTitle, navItems, children }) {
       </div>
       {!online ? (
         <div className="print-hide px-4 pt-3">
-          <Alert tone="warning">
-            You appear to be offline — showing the most recently loaded data.
-          </Alert>
+          <Alert tone="warning">{t("common.offline")}</Alert>
         </div>
       ) : null}
       <div className="print-hide">

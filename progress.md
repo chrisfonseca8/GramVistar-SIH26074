@@ -1438,6 +1438,37 @@ Use this section after every Claude Code session.
 
 ---
 
+# Post-Session Maintenance — Advisory Studio Input Changes
+
+**Date:** post Session 10 (all 50 tasks already complete)
+**Status:** Completed
+**Trigger:** explicit user request (not a `tasks.md` task ID)
+
+**Change 1 — Farmer advisory input no longer carries crop stage:**
+- `src/lib/advisory/buildAdvisoryInput.js` — dropped the `cropStage` param and output field. The Farmer advisory input is now `panchayat`/`crop`/`dateRange`/`forecast`/`downscaledValues`/`thresholds`/`uncertainty`/`relevantAlerts` only.
+- `src/lib/prompts/advisoryPrompt.js` — `buildAdvisoryUserPrompt` no longer prints a stage line; bumped `ADVISORY_PROMPT_VERSION` to `advisory-v4` since the prompt text changed.
+- `src/lib/advisory/mockAdvisory.js` — mock generator text no longer references stage.
+- `src/lib/advisory/deliveryPreviews.js` — SMS/WhatsApp/IVR/Bulletin previews now show crop only, no `(stage)` suffix.
+- `src/store/advisoryStore.js` — `Advisory`/`createDraft` no longer carry `cropStage`.
+- `src/app/scientist/advisory-studio/page.js` — removed the `estimateCropStage` call and all `cropStage` threading (state, props, draft creation, workflow/version-history badge, delivery-preview meta).
+- `src/app/farmer/page.js` — published-advisory header now shows `{panchayat} — {crop}` only.
+- Deleted `src/lib/calculations/cropStageEstimate.js` — it existed solely to auto-estimate the stage for the (now removed) Advisory Studio field; grepped the repo first to confirm no other caller.
+- **Scope note:** the Farmer portal's own Decision Engine (crop-stage selector, `evaluateDecision`, `fertilizerWindow`/`harvestWindow`, the `cropStage` feedback category) is a separate feature from the LLM advisory input and was deliberately left untouched — the request was specifically about the advisory input payload.
+
+**Change 2 — Authority (DM/DC) advisory input section removed from the UI; LLM scope confirmed already correct:**
+- `src/app/scientist/advisory-studio/page.js` — deleted the entire "Advisory Input" section (description text + "Preview advisory input (JSON)" button) that appeared under the Authority audience choice. The Authority flow now goes straight from picking the audience to "Generate advisory draft" — no JSON-preview step, since `buildAuthorityAdvisoryInput()` needs no scientist-supplied input (no crop/stage/timeline) to build.
+- Verified (no code change needed) that `src/lib/advisory/buildAuthorityAdvisoryInput.js` and `src/lib/prompts/advisoryPrompt.js`'s `authority` audience brief already cover exactly what was asked: irrigation/drinking-water availability (`RISK_LAYERS`'s `water` layer), every tracked hazard (drought, flood, heatwave, cold wave, pest/disease, crop health via `RISK_LAYERS`/`DISASTER_MODULES`), active alerts, and the panchayat's vulnerability ranking — this was already implemented prior to this change, this task only removed the now-redundant input-preview UI.
+- Confirmed the live-Gemini path already reads the key from `NEXT_PUBLIC_GEMINI_API_KEY` (`src/lib/advisory/geminiClient.js`, `src/lib/advisory/config.js`), matching `.env.local.example`. No change needed there.
+
+**Tests/checks:**
+- `npm run lint` — clean
+- `npm run test` — 172/172 pass
+- `npm run build` — clean, all 20 routes generated
+
+**Blockers:** None
+
+---
+
 # Important Project Notes
 
 - Frontend only.

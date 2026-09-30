@@ -21,7 +21,7 @@ export function RainChanceToday({ dayparts }) {
             <p className="text-xs text-foreground/50">
               {t(`farmer.rainChance.${part.key}`)}
             </p>
-            <p className="mt-1 text-lg font-semibold text-blue-600 dark:text-blue-400">
+            <p className="mt-1 text-lg font-semibold text-blue-600">
               {formatPercent(part.rainProbabilityPct)}
             </p>
           </div>

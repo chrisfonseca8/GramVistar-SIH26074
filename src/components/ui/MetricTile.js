@@ -9,7 +9,7 @@
 export function MetricTile({ label, value, bordered = false }) {
   if (bordered) {
     return (
-      <div className="rounded-lg border border-border p-4 ">
+      <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
         <dt className="text-xs uppercase tracking-wide text-foreground/40">
           {label}
         </dt>

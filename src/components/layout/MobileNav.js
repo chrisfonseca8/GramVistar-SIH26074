@@ -23,7 +23,7 @@ export function MobileNav({ navItems, open, onClose }) {
         onClick={onClose}
         className="absolute inset-0 bg-black/30"
       />
-      <nav className="absolute inset-y-0 left-0 flex w-64 flex-col gap-4 bg-background p-4 shadow-lg">
+      <nav className="absolute inset-y-0 left-0 flex w-64 flex-col gap-4 bg-surface p-4 shadow-lg">
         <div className="flex items-center justify-between">
           <span className="text-sm font-semibold">{t("common.menu")}</span>
           <button

@@ -54,7 +54,7 @@ export function generateMockAdvisory(advisoryInput) {
   if (heatBreach) {
     actions.push({
       title: "Mitigate heat stress",
-      description: `Provide shade/irrigation during peak heat for ${advisoryInput.crop} at ${advisoryInput.cropStage} stage.`,
+      description: `Provide shade/irrigation during peak heat for ${advisoryInput.crop}.`,
       priority: "High",
     });
     reasons.push(
@@ -104,7 +104,7 @@ export function generateMockAdvisory(advisoryInput) {
   }
 
   const summary =
-    `${advisoryInput.panchayat}, ${advisoryInput.crop} (${advisoryInput.cropStage}): ${actions[0].title.toLowerCase()}. ${actions.length > 1 ? `${actions.length - 1} additional recommendation(s) below.` : ""}`.trim();
+    `${advisoryInput.panchayat}, ${advisoryInput.crop}: ${actions[0].title.toLowerCase()}. ${actions.length > 1 ? `${actions.length - 1} additional recommendation(s) below.` : ""}`.trim();
 
   return {
     language: "en",

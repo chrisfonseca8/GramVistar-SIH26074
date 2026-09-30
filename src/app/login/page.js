@@ -138,7 +138,7 @@ export default function LoginPage() {
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-16">
-      <div className="w-full max-w-2xl rounded-2xl border border-border bg-background p-8 ">
+      <div className="w-full max-w-2xl rounded-2xl border border-border bg-surface p-8 shadow-sm">
         <div className="flex flex-col items-center gap-2 text-center">
           <span className="rounded-full border border-border px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-foreground/50 ">
             {t("login.gatewayBadge")}

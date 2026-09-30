@@ -15,7 +15,6 @@ import { createJSONStorage, persist } from "zustand/middleware";
  * id: string,
  * panchayat: string,
  * crop: string|null,
- * cropStage: string|null,
  * dateRange: { start: string, end: string }|null,
  * audience: "farmer"|"authority",
  * status: AdvisoryStatus,
@@ -46,13 +45,12 @@ export const useAdvisoryStore = create(
       },
 
       /**
-       * @param {{ panchayat: string, crop: string, cropStage: string, dateRange: { start: string, end: string }, audience: "farmer"|"authority", content: object, authorRole: string|null }} params
+       * @param {{ panchayat: string, crop: string, dateRange: { start: string, end: string }, audience: "farmer"|"authority", content: object, authorRole: string|null }} params
        * @returns {string} the new advisory's id
        */
       createDraft({
         panchayat,
         crop,
-        cropStage,
         dateRange,
         audience,
         content,
@@ -73,7 +71,6 @@ export const useAdvisoryStore = create(
           id,
           panchayat,
           crop,
-          cropStage,
           dateRange,
           audience,
           status: "Draft",

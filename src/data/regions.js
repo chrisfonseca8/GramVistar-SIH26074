@@ -5,6 +5,9 @@
  * Chas Block in Bokaro District; every other district/block is listed
  * for a realistic picker but has no data behind it.
  */
+// "Bokaro" is listed first (rather than alphabetically) since it's the
+// only district with real data behind it — putting it at the top saves
+// the scientist/authority a scroll every single login.
 export const JHARKHAND_DISTRICTS = [
   "Bokaro",
   "Chatra",
@@ -35,12 +38,14 @@ export const JHARKHAND_DISTRICTS = [
 /** The only district with data behind it in this environment. */
 export const DISTRICT_WITH_DATA = "Bokaro";
 
+// Same reasoning as above: "Chas" first since it's the only block with
+// real data behind it.
 export const BOKARO_BLOCKS = [
+  "Chas",
   "Bermo",
   "Bokaro Sadar",
   "Chandankiyari",
   "Chandrapura",
-  "Chas",
   "Gomia",
   "Jaridih",
   "Kasmar",

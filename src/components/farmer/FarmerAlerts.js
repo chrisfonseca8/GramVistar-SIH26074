@@ -10,14 +10,55 @@ const SEVERITY_TO_COLOR = {
   red: RISK_COLORS.red,
 };
 
+const CODE_TO_TYPE_KEY = {
+  frost: "farmer.alertsDetail.frostType",
+  heavyRain: "farmer.alertsDetail.heavyRainType",
+  heatStress: "farmer.alertsDetail.heatStressType",
+};
+
+const FROST_LEVEL_TO_KEY = {
+  watch: "farmer.heatCold.frostWatch",
+  warning: "farmer.heatCold.frostWarning",
+};
+
 /**
  * Alerts for the farmer's own panchayat, reusing
  * `selectPanchayatAlerts` — the same derivation `selectBlockAlerts`
  * already uses for the Scientist Block Overview, scoped to one
  * panchayat.
+ *
+ * `alert.type`/`alert.message` (from the shared selector) are English
+ * prose meant for the Scientist portal — here we rebuild both from
+ * `alert.code`/`alert.data` through i18next instead, so this card is
+ * fully translated when Hindi is selected.
  */
 export function FarmerAlerts({ alerts }) {
   const { t } = useTranslation();
+
+  function alertType(alert) {
+    const key = CODE_TO_TYPE_KEY[alert.code];
+    return key ? t(key) : alert.type;
+  }
+
+  function alertMessage(alert) {
+    if (alert.code === "frost") {
+      return t("farmer.alertsDetail.frostMessage", {
+        level: t(FROST_LEVEL_TO_KEY[alert.data.level] ?? alert.data.level),
+        tempC: alert.data.tempC,
+      });
+    }
+    if (alert.code === "heavyRain") {
+      return t("farmer.alertsDetail.heavyRainMessage", {
+        pct: alert.data.pct,
+      });
+    }
+    if (alert.code === "heatStress") {
+      return t("farmer.alertsDetail.heatStressMessage", {
+        value: alert.data.value,
+      });
+    }
+    return alert.message;
+  }
 
   return (
     <Card title={t("farmer.alerts.title")}>
@@ -36,8 +77,8 @@ export function FarmerAlerts({ alerts }) {
                 aria-hidden="true"
               />
               <span>
-                <span className="font-medium">{alert.type}</span> —{" "}
-                {alert.message}
+                <span className="font-medium">{alertType(alert)}</span> —{" "}
+                {alertMessage(alert)}
               </span>
             </li>
           ))}

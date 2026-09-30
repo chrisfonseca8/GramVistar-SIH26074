@@ -6,19 +6,19 @@
  * since simulated values must never be presented as
  * real observations or real actions.
  *
- * Farmer advisories carry `crop`/`cropStage` in `meta`; Authority (DM/DC)
+ * Farmer advisories carry `crop` in `meta`; Authority (DM/DC)
  * advisories don't (they're panchayat-wide, not crop-specific) — every
- * formatter here omits the crop/stage line when they're absent instead
+ * formatter here omits the crop line when it's absent instead
  * of printing "undefined".
  */
 
 const SMS_CHARACTER_LIMIT = 160;
 
 function cropLine(meta) {
-  return meta.crop ? `${meta.crop} (${meta.cropStage})` : null;
+  return meta.crop ? meta.crop : null;
 }
 
-/** @param {object} advisory @param {{ panchayat: string, crop?: string, cropStage?: string, audience: "farmer"|"authority" }} meta */
+/** @param {object} advisory @param {{ panchayat: string, crop?: string, audience: "farmer"|"authority" }} meta */
 export function formatSmsPreview(advisory, meta) {
   const actionTitles = advisory.actions.map((a) => a.title).join("; ");
   const label = meta.audience === "authority" ? "Gov Advisory" : "Chas KVK";
@@ -29,7 +29,7 @@ export function formatSmsPreview(advisory, meta) {
     : text;
 }
 
-/** @param {object} advisory @param {{ panchayat: string, crop?: string, cropStage?: string, audience: "farmer"|"authority" }} meta */
+/** @param {object} advisory @param {{ panchayat: string, crop?: string, audience: "farmer"|"authority" }} meta */
 export function formatWhatsAppPreview(advisory, meta) {
   const title =
     meta.audience === "authority"
@@ -52,7 +52,7 @@ export function formatWhatsAppPreview(advisory, meta) {
   return lines.join("\n");
 }
 
-/** @param {object} advisory @param {{ panchayat: string, crop?: string, cropStage?: string, audience: "farmer"|"authority" }} meta */
+/** @param {object} advisory @param {{ panchayat: string, crop?: string, audience: "farmer"|"authority" }} meta */
 export function formatIvrScript(advisory, meta) {
   const actionLines = advisory.actions
     .map((a, index) => `Point ${index + 1}: ${a.title}. ${a.description}`)
@@ -60,7 +60,7 @@ export function formatIvrScript(advisory, meta) {
   const intro =
     meta.audience === "authority"
       ? `Namaste. This is an administrative advisory for ${meta.panchayat} panchayat.`
-      : `Namaste. This is a crop advisory from Chas KVK for ${meta.panchayat} panchayat, ${meta.crop} crop, ${meta.cropStage} stage.`;
+      : `Namaste. This is a crop advisory from Chas KVK for ${meta.panchayat} panchayat, ${meta.crop} crop.`;
   return [
     intro,
     advisory.summary,
@@ -69,7 +69,7 @@ export function formatIvrScript(advisory, meta) {
   ].join(" ");
 }
 
-/** @param {object} advisory @param {{ panchayat: string, crop?: string, cropStage?: string, audience: "farmer"|"authority", publishedAt: string }} meta */
+/** @param {object} advisory @param {{ panchayat: string, crop?: string, audience: "farmer"|"authority", publishedAt: string }} meta */
 export function formatBulletin(advisory, meta) {
   const scope = cropLine(meta);
   return [

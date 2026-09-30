@@ -204,7 +204,7 @@ export default function BlockOverviewPage() {
 
 function SummaryCard({ title, primary, detail }) {
   return (
-    <div className="rounded-lg border border-border p-4 ">
+    <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
       <p className="text-xs uppercase tracking-wide text-foreground/40">
         {title}
       </p>

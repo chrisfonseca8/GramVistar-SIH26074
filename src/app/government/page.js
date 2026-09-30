@@ -43,9 +43,8 @@ export default function GovernmentPortalPage() {
           Every panchayat-level operational advisory the Scientist / KVK
           portal has published — irrigation/water, hazards and alerts, not
           tied to any one crop. The Farmer portal gets its own,
-          separately-reviewed crop-specific advisory. Risk maps and
-          disaster-management modules are covered elsewhere in the
-          Government portal.
+          separately-reviewed crop-specific advisory. Risk maps are covered
+          elsewhere in the Government portal.
         </p>
       </div>
 
@@ -61,7 +60,7 @@ export default function GovernmentPortalPage() {
             return (
               <section
                 key={advisory.id}
-                className="rounded-lg border border-border p-4 "
+                className="rounded-lg border border-border bg-surface p-4 shadow-sm"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-sm font-semibold">{advisory.panchayat}</p>

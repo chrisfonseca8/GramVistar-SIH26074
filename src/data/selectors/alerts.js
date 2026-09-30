@@ -6,7 +6,7 @@ const HEAVY_RAIN_PROBABILITY_THRESHOLD_PCT = 80;
 const HEAT_INDEX_DANGER_THRESHOLD_C = 41; // NOAA "danger" category, converted to Celsius
 
 /**
- * @typedef {{ panchayat: string, severity: "yellow"|"orange"|"red", type: string, message: string }} BlockAlert
+ * @typedef {{ panchayat: string, severity: "yellow"|"orange"|"red", type: string, message: string, code: "frost"|"heavyRain"|"heatStress", data: object }} BlockAlert
  */
 
 /**
@@ -29,6 +29,11 @@ function computeAlertsForCurrentHour(panchayat, current) {
       severity: frost.value === "warning" ? "red" : "yellow",
       type: "Frost Risk",
       message: `Frost ${frost.value} — current temperature ${current.temperatureC}°C`,
+      // `code`/`data` let a consumer (the Farmer portal) rebuild this as a
+      // translated string via i18next interpolation instead of using the
+      // English `message` above directly — see `FarmerAlerts.js`.
+      code: "frost",
+      data: { level: frost.value, tempC: current.temperatureC },
     });
   }
 
@@ -41,6 +46,8 @@ function computeAlertsForCurrentHour(panchayat, current) {
       severity: "orange",
       type: "Heavy Rain Likely",
       message: `${current.rainProbabilityPct}% rain probability this hour`,
+      code: "heavyRain",
+      data: { pct: current.rainProbabilityPct },
     });
   }
 
@@ -54,6 +61,8 @@ function computeAlertsForCurrentHour(panchayat, current) {
       severity: "red",
       type: "Heat Stress",
       message: `Heat index ${heatIndex.value.toFixed(1)}°C`,
+      code: "heatStress",
+      data: { value: heatIndex.value.toFixed(1) },
     });
   }
 

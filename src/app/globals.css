@@ -1,22 +1,63 @@
 @import "tailwindcss";
 
+/*
+ * Light theme by default: a warm, subtly-tinted page background with
+ * pure-white "floating cards" (white surface, slate border, soft
+ * shadow). Dark mode (below) follows the OS/browser preference and uses
+ * a moderate charcoal, not a harsh near-black, so it stays easy on the
+ * eyes rather than high-contrast-for-its-own-sake.
+ */
 :root {
   color-scheme: light dark;
-  --background: #f7faf9;
-  --foreground: #1b2624;
+  --background: #f8fafc;
+  --background-gradient: linear-gradient(
+    135deg,
+    rgba(236, 253, 245, 0.3),
+    #f8fafc
+  );
+  --foreground: #607d8b;
+  --text-muted: #90a4ae;
   --surface: #ffffff;
-  --surface-muted: #eef3f1;
-  --border: #dbe4e1;
-  --border-hover: #b7c8c3;
-  --primary: #0f766e;
-  --primary-hover: #0b5c56;
-  --primary-foreground: #ffffff;
-  --muted: #eef3f1;
+  --surface-muted: #f1f5f9;
+  --border: #e2e8f0;
+  --border-hover: #cbd5e1;
+  --primary: #81c784;
+  --primary-hover: #66bb6a;
+  /* Dark text on the pastel primary/accent fills — both are light,
+     high-luminance colors, so white text on top of them reads poorly. */
+  --primary-foreground: #143d1b;
+  --muted: #f1f5f9;
+  --accent: #81d4fa;
+  --accent-foreground: #0d3a52;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1c2224;
+    --background-gradient: linear-gradient(
+      135deg,
+      rgba(129, 199, 132, 0.06),
+      #1c2224
+    );
+    --foreground: #dbe4e6;
+    --text-muted: #92a3a6;
+    --surface: #262e30;
+    --surface-muted: #2c3538;
+    --border: #3a4548;
+    --border-hover: #4c5a5e;
+    --primary: #8fd192;
+    --primary-hover: #a3dba5;
+    --primary-foreground: #0f2913;
+    --muted: #2c3538;
+    --accent: #8fd8fb;
+    --accent-foreground: #0a2c3e;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-text-muted: var(--text-muted);
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
   --color-border: var(--border);
@@ -25,29 +66,16 @@
   --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-muted: var(--muted);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f1a18;
-    --foreground: #e7efec;
-    --surface: #16211f;
-    --surface-muted: #1e2b28;
-    --border: #2b3a37;
-    --border-hover: #3f524d;
-    --primary: #2dd4bf;
-    --primary-hover: #5eead4;
-    --primary-foreground: #06201c;
-    --muted: #1e2b28;
-  }
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
 body {
-  background: var(--background);
+  background: var(--background-gradient), var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), sans-serif;
 }
 
 /* Hides app chrome (header/sidebar/breadcrumbs) when a page is exported

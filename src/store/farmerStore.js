@@ -10,11 +10,13 @@ import { createJSONStorage, persist } from "zustand/middleware";
  */
 export const useFarmerStore = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       /** @type {string | null} */
       selectedCrop: null,
       /** @type {string | null} */
       selectedCropStage: null,
+      /** Advisory action items the farmer has marked done, as `${advisoryId}:${actionIndex}` keys. @type {string[]} */
+      completedActionKeys: [],
 
       /** @param {string | null} crop */
       setSelectedCrop(crop) {
@@ -24,6 +26,17 @@ export const useFarmerStore = create(
       /** @param {string | null} stage */
       setSelectedCropStage(stage) {
         set({ selectedCropStage: stage });
+      },
+
+      /** @param {string} advisoryId @param {number} actionIndex */
+      toggleActionCompleted(advisoryId, actionIndex) {
+        const key = `${advisoryId}:${actionIndex}`;
+        const current = get().completedActionKeys;
+        set({
+          completedActionKeys: current.includes(key)
+            ? current.filter((k) => k !== key)
+            : [...current, key],
+        });
       },
     }),
     {

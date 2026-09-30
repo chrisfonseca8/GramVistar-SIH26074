@@ -3,14 +3,7 @@
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { formatPercent, formatTemperature } from "@/lib/formatters";
-
-function formatDayLabel(dateKey) {
-  return new Date(dateKey).toLocaleDateString("en-IN", {
-    weekday: "short",
-    timeZone: "UTC",
-  });
-}
+import { formatDayLabel, formatPercent, formatTemperature } from "@/lib/formatters";
 
 /**
  * A simplified 5-day daily forecast strip — day, high/low
@@ -19,7 +12,7 @@ function formatDayLabel(dateKey) {
  * collapsed to daily granularity with no per-hour detail.
  */
 export function FiveDayForecast({ days }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   if (!days || days.length === 0) {
     return (
@@ -38,7 +31,7 @@ export function FiveDayForecast({ days }) {
             className="rounded-md border border-border p-2 "
           >
             <p className="text-xs text-foreground/50">
-              {formatDayLabel(day.dateKey)}
+              {formatDayLabel(day.dateKey, i18n.language)}
             </p>
             <p className="mt-1 text-sm font-semibold">
               {formatTemperature(day.tempMaxC)}
@@ -46,7 +39,7 @@ export function FiveDayForecast({ days }) {
             <p className="text-xs text-foreground/50">
               {formatTemperature(day.tempMinC)}
             </p>
-            <p className="mt-1 text-xs text-blue-600 dark:text-blue-400">
+            <p className="mt-1 text-xs text-blue-600">
               {formatPercent(day.rainProbabilityMaxPct)}
             </p>
           </div>
