@@ -37,6 +37,7 @@ export const useAuthStore = create(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ role: state.role }),
       onRehydrateStorage: () => (state) => {
+        if (state?.role === "Super Admin") state.logout();
         state?.setHasHydrated(true);
       },
     },

@@ -16,7 +16,6 @@ import { FiveDayForecast } from "@/components/farmer/FiveDayForecast";
 import { FarmerAlerts } from "@/components/farmer/FarmerAlerts";
 import { CropSelector } from "@/components/farmer/CropSelector";
 import { RainChanceToday } from "@/components/farmer/RainChanceToday";
-import { SoilMoistureGaugeCard } from "@/components/farmer/SoilMoistureGaugeCard";
 import { CropThresholdOutlook } from "@/components/farmer/CropThresholdOutlook";
 import { TodaysWeatherCard } from "@/components/farmer/TodaysWeatherCard";
 import { HourlyRainProbabilityCard } from "@/components/farmer/HourlyRainProbabilityCard";
@@ -231,10 +230,7 @@ export default function FarmerPortalPage() {
             />
           )}
 
-          <EnvironmentalConditionCards
-            current={todaysWeather}
-            soilMoistureDeficit={currentSoilDeficit}
-          />
+          <EnvironmentalConditionCards current={todaysWeather} />
 
           <TodaysActionCard actionCard={actionCard} />
 
@@ -254,8 +250,6 @@ export default function FarmerPortalPage() {
           <FiveDayForecast days={fiveDayForecast} />
 
           <RainChanceToday dayparts={rainByDaypart} />
-
-          <SoilMoistureGaugeCard soilMoistureDeficit={currentSoilDeficit} />
 
           <CropThresholdOutlook crop={selectedCrop} days={cropOutlook} />
 

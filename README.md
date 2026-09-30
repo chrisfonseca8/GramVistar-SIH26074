@@ -485,12 +485,11 @@ Authentication is simulated through a role switcher.
 
 | Role | Primary scope |
 |---|---|
-| Super Admin | Entire application (all 3 portals) |
 | Scientist / KVK | Scientist portal — Chas Block + five panchayats |
 | DM/DC | Government portal — District/block aggregates |
 | Farmer | Farmer portal — own simulated farm context |
 
-> This is the role list actually implemented (`src/lib/auth/permissions.js`): Super Admin, Scientist / KVK, DM/DC, and Farmer. Scientist and Government roles also select a district and block (`/select-region`) right after logging in, before entering their portal.
+> The supported roles are Scientist / KVK, DM/DC, and Farmer. Scientist and Government roles select a district and block (`/select-region`) after logging in, before entering their portal.
 
 RBAC is a client-side simulation, not production security.
 
@@ -750,7 +749,7 @@ Short, role-specific guides. None of these require reading any code — just log
 
 ## Government
 
-1. Log in as **DM/DC** — select a district and block first — or as Super Admin.
+1. Log in as **DM/DC** and select a district and block first.
 2. **Overview** lists every published advisory across all panchayats.
 3. **Climate Overview** shows block-wide elevation, temperature-vs-elevation, and vulnerability context.
 4. **Risk Maps** — pick one of 7 hazard layers (Drought/Flood/Heatwave/Cold Wave/Pest-Disease/Crop Health/Water) to see it as a panchayat choropleth with a legend; click a panchayat for its exact value.

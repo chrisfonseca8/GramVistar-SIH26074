@@ -3,25 +3,23 @@
  * server-side authorization behind any of this.
  */
 
-export const ROLES = ["Super Admin", "Scientist / KVK", "DM/DC", "Farmer"];
+export const ROLES = ["Scientist / KVK", "DM/DC", "Farmer"];
 
 export const PORTALS = ["scientist", "farmer", "government"];
 
 /**
  * Roles that pick a district/block (`/select-region`) right after logging
- * in, before landing on their portal. Super Admin skips it (instant entry)
- * and Farmer never sees it (their portal is scoped to a panchayat, not a
- * district/block).
+ * in, before landing on their portal. Farmer never sees it (their portal is
+ * scoped to a panchayat, not a district/block).
  */
 export const REGION_GATED_ROLES = ["Scientist / KVK", "DM/DC"];
 
 /**
- * Which portals each role may open. "Super Admin" gets every portal.
+ * Which portals each role may open.
  * DM/DC opens the Government portal.
  * @type {Record<string, string[]>}
  */
 export const ROLE_PORTAL_ACCESS = {
-  "Super Admin": ["scientist", "farmer", "government"],
   "Scientist / KVK": ["scientist"],
   "DM/DC": ["government"],
   Farmer: ["farmer"],

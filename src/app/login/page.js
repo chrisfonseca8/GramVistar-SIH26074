@@ -59,21 +59,7 @@ const ICONS = {
       <path d="M12 13v8" strokeLinecap="round" />
     </svg>
   ),
-  bolt: (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      className="h-4 w-4"
-    >
-      <path
-        d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  ),
+
 };
 
 const CATEGORIES = [
@@ -227,16 +213,6 @@ export default function LoginPage() {
               {t("login.proceed")}
             </button>
 
-            <div className="mt-4 flex items-center justify-center gap-2 border-t border-border pt-4 ">
-              <span className="text-foreground/40">{ICONS.bolt}</span>
-              <button
-                type="button"
-                onClick={() => completeLogin("Super Admin")}
-                className="text-xs font-medium text-foreground/60 underline underline-offset-4 hover:text-foreground"
-              >
-                {t("login.instantEntry")}
-              </button>
-            </div>
           </>
         )}
 

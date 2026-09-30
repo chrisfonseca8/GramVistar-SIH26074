@@ -2,37 +2,15 @@
 
 import { useTranslation } from "react-i18next";
 import { computeSprayWindow } from "@/lib/calculations/sprayWindow";
-import { formatNumber, formatPercent, formatWindSpeed } from "@/lib/formatters";
+import { formatPercent, formatWindSpeed } from "@/lib/formatters";
 import { RISK_COLORS } from "@/lib/riskLevels";
 
 /**
- * A row of at-a-glance condition cards for right now — soil moisture,
- * humidity, wind and spray-window status. Every value here is read
- * straight from the current forecast hour and the app's own shared
- * calculation functions (the same soil-moisture zone boundaries as the
- * Soil Moisture gauge, the same `computeSprayWindow` used elsewhere) —
- * nothing here is a placeholder or invented number.
+ * A row of at-a-glance humidity, wind and spray-window cards for current
+ * conditions, using the app's shared forecast values and calculations.
  */
-export function EnvironmentalConditionCards({ current, soilMoistureDeficit }) {
+export function EnvironmentalConditionCards({ current }) {
   const { t } = useTranslation();
-
-  const soilStatus =
-    soilMoistureDeficit == null
-      ? null
-      : soilMoistureDeficit <= 0.03
-        ? {
-            label: t("farmer.conditions.soilStatus.sufficient"),
-            color: RISK_COLORS.green,
-          }
-        : soilMoistureDeficit <= 0.06
-          ? {
-              label: t("farmer.conditions.soilStatus.gettingDry"),
-              color: RISK_COLORS.yellow,
-            }
-          : {
-              label: t("farmer.conditions.soilStatus.needsWater"),
-              color: RISK_COLORS.red,
-            };
 
   const humidityStatus =
     current?.humidityPct == null
@@ -72,17 +50,7 @@ export function EnvironmentalConditionCards({ current, soilMoistureDeficit }) {
       : { available: false };
 
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      <ConditionCard
-        icon="💧"
-        label={t("farmer.conditions.soilMoisture")}
-        value={
-          soilMoistureDeficit == null
-            ? "—"
-            : formatNumber(soilMoistureDeficit, { decimals: 3, suffix: " m³/m³" })
-        }
-        status={soilStatus}
-      />
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <ConditionCard
         icon="🌡️"
         label={t("farmer.weather.humidity")}
