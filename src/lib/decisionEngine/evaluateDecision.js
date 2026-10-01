@@ -36,7 +36,7 @@ export const DECISION_ACTIONS = [
 /**
  * @typedef {{
  * forecast: {
- * soilMoistureDeficit?: number|null,
+ * soilMoisture?: number|null,
  * rainProbabilityPct?: number|null,
  * windSpeedKmh?: number|null,
  * temperatureC?: number|null,
@@ -78,7 +78,7 @@ function runRule(
   switch (action) {
     case "irrigation": {
       const result = computeIrrigationWindow({
-        soilMoistureDeficit: forecast.soilMoistureDeficit,
+        soilMoisture: forecast.soilMoisture,
         rainProbabilityPct: forecast.rainProbabilityPct,
         ...thresholds,
       });

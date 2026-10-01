@@ -58,7 +58,6 @@ const FORECAST_PANCHAYAT_FIELDS = [
   "precipitationMm",
   "rainProbabilityPct",
   "soilMoisture",
-  "soilDeficit",
 ];
 const FORECAST_PANCHAYAT_RANGES = {
   temperatureC: RANGES.temperature,
@@ -67,7 +66,6 @@ const FORECAST_PANCHAYAT_RANGES = {
   precipitationMm: RANGES.precipitationHourly,
   rainProbabilityPct: RANGES.rainProbabilityPct,
   soilMoisture: RANGES.soilMoisture,
-  soilDeficit: { min: -0.01, max: 1 },
 };
 
 /**

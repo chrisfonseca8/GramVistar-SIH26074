@@ -69,7 +69,7 @@ export default function GovernmentClimateOverviewPage() {
 
       <Card
         title="Panchayat Vulnerability Ranking"
-        description="Climate/soil exposure proxy — rainfall variability, soil water capacity, elevation range and soil moisture deficit. Excludes population/livelihoods, which don't exist anywhere in /data. Ranking is relative to these 5 panchayats only, not an absolute score."
+        description="Climate/soil exposure proxy — rainfall variability, soil water capacity, elevation range and soil moisture. Excludes population/livelihoods, which don't exist anywhere in /data. Ranking is relative to these 5 panchayats only, not an absolute score."
       >
         <VulnerabilityRankingChart data={data} />
       </Card>

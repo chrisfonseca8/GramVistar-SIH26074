@@ -18,7 +18,7 @@ function concernLevel(layerKey, result) {
   if (!result.available) return "none";
 
   if (layerKey === "water") {
-    // Inverted: "none" (no deficit left → water scarce) is the concerning end.
+    // Inverted: "none" (lowest soil moisture → water scarce) is the concerning end.
     if (result.level === "none") return "high";
     if (result.level === "watch") return "low";
     return "none";

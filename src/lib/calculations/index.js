@@ -5,7 +5,6 @@ export * from "./windSpeed";
 export * from "./et0Hargreaves";
 export * from "./gdd";
 export * from "./spi";
-export * from "./soilMoistureDeficit";
 export * from "./heatIndex";
 export * from "./frostRisk";
 export * from "./sprayWindow";

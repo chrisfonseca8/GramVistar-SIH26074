@@ -13,7 +13,7 @@ import { computeIrrigationWindow } from "@/lib/calculations/irrigationWindow";
  * temperatureC: number|null,
  * humidityPct: number|null,
  * rainProbabilityPct: number|null,
- * soilDeficit: number|null,
+ * soilMoisture: number|null,
  * sprayFavorable: boolean|null,
  * irrigate: boolean|null,
  * vulnerabilityIndex: number|null,
@@ -34,7 +34,7 @@ export function selectPanchayatComparisonSummary(data) {
       : null;
     const irrigation = current
       ? computeIrrigationWindow({
-          soilMoistureDeficit: current.soilDeficit,
+          soilMoisture: current.soilMoisture,
           rainProbabilityPct: current.rainProbabilityPct,
         })
       : null;
@@ -47,7 +47,7 @@ export function selectPanchayatComparisonSummary(data) {
       temperatureC: current?.temperatureC ?? null,
       humidityPct: current?.humidityPct ?? null,
       rainProbabilityPct: current?.rainProbabilityPct ?? null,
-      soilDeficit: current?.soilDeficit ?? null,
+      soilMoisture: current?.soilMoisture ?? null,
       sprayFavorable: spray?.available ? spray.value.favorable : null,
       irrigate: irrigation?.available ? irrigation.value.irrigate : null,
       vulnerabilityIndex: vulnerabilityEntry?.available

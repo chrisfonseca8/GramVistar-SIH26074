@@ -23,7 +23,7 @@ export const RISK_LAYERS = [
     key: "drought",
     label: "Drought",
     description:
-      "Current soil moisture deficit against illustrative dry/severe thresholds (same 0.03/0.06 m³/m³ zones as the Scientist portal's soil moisture gauge).",
+      "Current volumetric soil moisture against illustrative dry/severe thresholds (same 0.26/0.24 m³/m³ zones as the Scientist portal's soil moisture gauge).",
   },
   {
     key: "flood",
@@ -53,13 +53,13 @@ export const RISK_LAYERS = [
     key: "cropHealth",
     label: "Crop Health",
     description:
-      "Illustrative composite of heat stress, soil moisture deficit and pest/disease pressure, min-max ranked across the 5 panchayats — the same composite-ranking method as the Vulnerability Ranking, applied to different factors.",
+      "Illustrative composite of heat stress, soil moisture and pest/disease pressure, min-max ranked across the 5 panchayats — the same composite-ranking method as the Vulnerability Ranking, applied to different factors.",
   },
   {
     key: "water",
     label: "Water",
     description:
-      "Same soil moisture deficit data as Drought, framed as water availability instead of drought risk (green = plentiful, red = scarce) — the two layers share their one real underlying signal, viewed from two angles.",
+      "Same soil moisture data as Drought, framed as water availability instead of drought risk (green = plentiful, red = scarce) — the two layers share their one real underlying signal, viewed from two angles.",
   },
 ];
 
@@ -90,30 +90,31 @@ function categoricalResult(level, colorMap, label) {
 
 function droughtLayer(data, panchayat) {
   const current = currentRecord(data, panchayat);
-  if (!current || !isFiniteNumber(current.soilDeficit))
-    return { available: false, reason: "missing soilDeficit" };
+  if (!current || !isFiniteNumber(current.soilMoisture))
+    return { available: false, reason: "missing soilMoisture" };
+  // Lower volumetric soil moisture = drier = worse.
   const level =
-    current.soilDeficit >= 0.06
+    current.soilMoisture <= 0.24
       ? "severe"
-      : current.soilDeficit >= 0.03
+      : current.soilMoisture <= 0.26
         ? "watch"
         : "none";
   return categoricalResult(
     level,
     SEVERITY_TO_COLOR,
-    `deficit ${current.soilDeficit.toFixed(3)} m³/m³`,
+    `soil moisture ${current.soilMoisture.toFixed(3)} m³/m³`,
   );
 }
 
 function waterLayer(data, panchayat) {
   const current = currentRecord(data, panchayat);
-  if (!current || !isFiniteNumber(current.soilDeficit))
-    return { available: false, reason: "missing soilDeficit" };
-  // Inverted framing of the same deficit value: low deficit = plentiful water = green.
+  if (!current || !isFiniteNumber(current.soilMoisture))
+    return { available: false, reason: "missing soilMoisture" };
+  // Inverted framing of the same soil-moisture value: higher moisture = plentiful water = green.
   const level =
-    current.soilDeficit >= 0.06
+    current.soilMoisture <= 0.24
       ? "none"
-      : current.soilDeficit >= 0.03
+      : current.soilMoisture <= 0.26
         ? "watch"
         : "severe";
   const invertedColorMap = {
@@ -124,7 +125,7 @@ function waterLayer(data, panchayat) {
   return {
     available: true,
     level,
-    label: `deficit ${current.soilDeficit.toFixed(3)} m³/m³`,
+    label: `soil moisture ${current.soilMoisture.toFixed(3)} m³/m³`,
     color: invertedColorMap[level],
   };
 }
@@ -210,7 +211,7 @@ function cropHealthValuesByPanchayat(data) {
     return {
       panchayat,
       heatIndexC: heatIndex?.available ? heatIndex.value : null,
-      soilDeficit: current?.soilDeficit ?? null,
+      soilMoisture: current?.soilMoisture ?? null,
       pestScore: pest?.available
         ? CROP_HEALTH_FACTOR_KEYS.PEST_TO_SCORE[pest.value.level]
         : null,
@@ -221,7 +222,7 @@ function cropHealthValuesByPanchayat(data) {
     panchayatFactors,
     [
       { key: "heatIndexC", higherIsWorse: true, weight: 1 },
-      { key: "soilDeficit", higherIsWorse: true, weight: 1 },
+      { key: "soilMoisture", higherIsWorse: false, weight: 1 },
       { key: "pestScore", higherIsWorse: true, weight: 1 },
     ],
     "crop health risk index (0-1, higher = worse, relative to the panchayats compared)",

@@ -22,7 +22,7 @@ export function Table({ className = "", children }) {
 
 export function TableHeadRow({ children }) {
   return (
-    <tr className="border-b border-border text-xs uppercase tracking-wide text-foreground/40 ">
+    <tr className="border-b border-border text-xs font-medium tracking-wider text-text-muted uppercase ">
       {children}
     </tr>
   );

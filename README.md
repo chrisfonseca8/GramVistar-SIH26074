@@ -26,9 +26,9 @@ The current prototype combines:
 - client-side derived variables,
 - client-side surrogate downscaling,
 - client-side uncertainty estimation,
-- and optional Gemini-assisted text generation.
+- and optional, locally-run LLM-assisted text generation.
 
-Numerical calculations are performed by TypeScript utilities in the browser. Gemini is a generation layer for advisory/report drafting and optional animation-code generation; it does **not** replace numerical weather processing.
+Numerical calculations are performed by TypeScript utilities in the browser. The local generation layer (an [Ollama](https://ollama.com) model, `llama3.2` by default) is only for advisory/report drafting and optional animation-code generation; it does **not** replace numerical weather processing. Everything stays on the developer's machine — no API key, no remote call.
 
 ### Initial Panchayats
 
@@ -55,7 +55,7 @@ Numerical calculations are performed by TypeScript utilities in the browser. Gem
 - Farmer decision cards.
 - Government risk/operations dashboards.
 - Local feedback and audit state.
-- Optional Gemini integration with mandatory stub mode.
+- Optional local LLM (Ollama) integration with mandatory stub mode.
 - Client-side export.
 - Responsive/mobile-first Farmer experience.
 - Automated tests.
@@ -69,7 +69,7 @@ Numerical calculations are performed by TypeScript utilities in the browser. Gem
 - Production notification infrastructure.
 - Server-side application APIs.
 - Autonomous disaster declarations.
-- Gemini as a numerical weather model.
+- The local LLM as a numerical weather model.
 
 ---
 
@@ -113,7 +113,7 @@ Portal           Portal       Portal
       Advisory / Alert / Feedback
               │
               ▼
-        Gemini or Mock Layer
+     Local LLM or Mock Layer
 ```
 
 ### Core principles
@@ -256,7 +256,7 @@ Provide operational and spatial information for planning and resource allocation
 - drought/flood/heat/cold risk maps,
 - crop health,
 - water availability,
-- Gemini/mock-generated relief & resource allocation per published advisory,
+- local-LLM/mock-generated relief & resource allocation per published advisory,
 - alert escalation.
 
 ---
@@ -420,7 +420,7 @@ Uncertainty + thresholds
    ↓
 Structured advisory JSON
    ↓
-Gemini / Mock
+Local LLM / Mock
    ↓
 Schema validation
    ↓
@@ -443,9 +443,9 @@ An unreviewed LLM response must never be treated as a published advisory.
 
 ---
 
-# 9. Gemini Integration
+# 9. Local LLM Integration
 
-Gemini is optional and must have a stub mode.
+A locally-run LLM (via [Ollama](https://ollama.com), `llama3.2` by default — no cloud API, no key) is optional and must have a stub mode.
 
 ## Used for
 
@@ -497,7 +497,7 @@ Important rules:
 
 - Farmers must not see other farmers' records.
 - Government views primarily use aggregated information.
-- Sensitive farmer information must not be unnecessarily sent to Gemini.
+- Sensitive farmer information must not be unnecessarily sent to the local LLM.
 - Advisory edits, reviews, approvals, and publications are audit logged.
 
 ---
@@ -536,7 +536,7 @@ The exact implementation may vary if the same responsibilities remain separated.
 | i18n | react-i18next |
 | Forms | React Hook Form |
 | Validation | Zod |
-| LLM | Gemini + mock layer |
+| LLM | Local Ollama model (`llama3.2`) + mock layer |
 | Offline | Service Worker / Workbox |
 | Testing | Vitest / React Testing Library / Playwright |
 | Deployment | Static-compatible hosting |
@@ -616,22 +616,17 @@ Local data already lives in `public/data/` (8 CSV/GeoJSON files, copied verbatim
 
 # 15. Environment
 
-Copy the example env file and fill it in only if you want to test live Gemini generation:
-
-```bash
-cp .env.local.example .env.local
-```
-
 ```env
-# .env.local — both variables are optional; the app works fully without either
+# .env — all variables are optional; the app works fully without any of them
 NEXT_PUBLIC_USE_STUB_LLM=true
-NEXT_PUBLIC_GEMINI_API_KEY=
+NEXT_PUBLIC_OLLAMA_URL=http://localhost:11434
+NEXT_PUBLIC_OLLAMA_MODEL=llama3.2
 ```
 
-- **Default / recommended:** leave `.env.local` absent, or `NEXT_PUBLIC_USE_STUB_LLM=true`. The advisory generation feature (Scientist Advisory Studio) uses a deterministic mock generator that produces real, schema-valid content from the app's own real computed data — no network call, no API key needed. This is how every feature in this app has actually been verified throughout development.
-- **Live Gemini (untested in this environment):** set `NEXT_PUBLIC_USE_STUB_LLM=false` and provide a real `NEXT_PUBLIC_GEMINI_API_KEY`. Both conditions must be true for live mode — an explicit `false` with no key still safely falls back to mock (see `src/lib/advisory/config.js`'s `isMockMode()`).
+- **Default / recommended:** `NEXT_PUBLIC_USE_STUB_LLM=true` (or the variable absent). The advisory generation feature (Scientist Advisory Studio, Government Relief & Resource Allocator) uses a deterministic mock generator that produces real, schema-valid content from the app's own real computed data — no network call, nothing to install. This is how every feature in this app has actually been verified throughout development.
+- **Live local generation:** set `NEXT_PUBLIC_USE_STUB_LLM=false` and have [Ollama](https://ollama.com) running locally (`ollama serve`) with the model pulled (`ollama pull llama3.2`, or any other local model — override `NEXT_PUBLIC_OLLAMA_MODEL` to use it). No API key, ever — the app talks to `http://localhost:11434` directly from the browser. `NEXT_PUBLIC_OLLAMA_URL`/`NEXT_PUBLIC_OLLAMA_MODEL` only need setting if Ollama isn't on its default port or you want a different pulled model.
 
-> A browser-exposed API key is not suitable for production — this is a prototype-only pattern. Production live-LLM access should use a server-side secret boundary, which is outside this project's current scope. Never commit `.env.local` (it's git-ignored).
+> This is a frontend-only prototype with no server-side secret boundary — which is exactly why a local, keyless model fits it better than a cloud API ever did. If the local service isn't reachable, generation fails safely to an error state; it never falls back to silently fabricating content.
 
 ---
 
@@ -722,7 +717,7 @@ Publish the contents of `out/` to a `gh-pages` branch (e.g. via the `actions/dep
 
 ### Environment variables in production
 
-None are required. If live Gemini generation is ever enabled for a deployed instance, set `NEXT_PUBLIC_USE_STUB_LLM=false` and `NEXT_PUBLIC_GEMINI_API_KEY` in the hosting provider's environment-variable settings — never commit them. See §15 Environment's warning about browser-exposed keys not being production-safe; this remains true regardless of hosting provider.
+None are required. Live generation is a browser-to-`localhost` call, so even with `NEXT_PUBLIC_USE_STUB_LLM=false` set on a deployed instance, it only works for a visitor who also has Ollama running locally on their own machine while browsing the site — there is no server-side model to reach. For a normal deployed instance, leave mock mode on.
 
 ---
 
@@ -735,7 +730,7 @@ Short, role-specific guides. None of these require reading any code — just log
 1. Log in as **Scientist / KVK** → select **Bokaro** district and **Chas** block → lands on **Block Overview**, showing the map, current alerts and vulnerability ranking for all 5 panchayats.
 2. Use the panchayat selector (top-right of every page) to scope most views to one panchayat.
 3. **Model Diagnostics** has 23 numbered diagnostic plots (correlation, spatial uncertainty, crop thresholds, water balance, etc.) — scroll through, or use **Panchayat Deep Dive**'s tabs for a more focused per-panchayat view.
-4. To publish an advisory: open **Advisory Studio** → build the structured input → **Generate** (mock or live Gemini) → edit the draft if needed → move it through **Review → Approve → Publish**. Once Published, it's immediately visible on the Farmer and Government portals.
+4. To publish an advisory: open **Advisory Studio** → build the structured input → **Generate** (mock or live local generation) → edit the draft if needed → move it through **Review → Approve → Publish**. Once Published, it's immediately visible on the Farmer and Government portals.
 5. **Feedback Inbox** shows every farmer feedback submission, filterable by panchayat/category/date, with a trend summary.
 
 ## Farmer
@@ -754,7 +749,7 @@ Short, role-specific guides. None of these require reading any code — just log
 3. **Climate Overview** shows block-wide elevation, temperature-vs-elevation, and vulnerability context.
 4. **Risk Maps** — pick one of 7 hazard layers (Drought/Flood/Heatwave/Cold Wave/Pest-Disease/Crop Health/Water) to see it as a panchayat choropleth with a legend; click a panchayat for its exact value.
 5. **Alert Escalation** — escalate/de-escalate any active alert across Green/Yellow/Orange/Red, and preview how it would go out over SMS/IVR/WhatsApp/push (all simulated).
-6. **Relief & Resource Allocator** — pick a published, DM/DC-approved advisory and generate a relief/resource allocation for that panchayat (mock or live Gemini), built from the advisory's own content plus the panchayat's current hazard data. Every generation is kept in a running history below, not just the latest one.
+6. **Relief & Resource Allocator** — pick a published, DM/DC-approved advisory and generate a relief/resource allocation for that panchayat (mock or live local generation), built from the advisory's own content plus the panchayat's current hazard data. Every generation is kept in a running history below, not just the latest one.
 
 ---
 

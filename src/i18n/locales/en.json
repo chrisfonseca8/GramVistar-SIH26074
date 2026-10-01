@@ -35,6 +35,7 @@
     "scientist.advisoryStudio": "Advisory Studio",
     "scientist.feedbackInbox": "Feedback Inbox",
     "farmer.today": "Today",
+    "farmer.mobileDashboard": "Mobile Dashboard",
     "farmer.feedback": "Feedback",
     "government.overview": "Overview",
     "government.climateOverview": "Climate Overview",
@@ -137,7 +138,7 @@
       "title": "Atmospheric & Soil Stress",
       "unavailable": "No current-hour data available",
       "humidity": "Humidity (%)",
-      "soilDeficit": "Soil Deficit (m³/m³ ×100)",
+      "soilMoisture": "Soil Moisture (m³/m³ ×100)",
       "wind": "Wind (km/h)"
     },
     "alertsDetail": {
@@ -184,10 +185,6 @@
       "afternoon": "Afternoon",
       "evening": "Evening",
       "night": "Night"
-    },
-    "soilMoisture": {
-      "title": "Soil Moisture",
-      "description": "How dry your soil is right now. Green = fine, yellow = getting dry, red = needs water soon."
     },
     "cropOutlook": {
       "title": "Temperature vs. {{crop}}",
@@ -288,6 +285,11 @@
       "yield": {
         "expected": "Expected yield (quintals/acre)"
       }
+    },
+    "mobileDashboard": {
+      "title": "Mobile Dashboard",
+      "description": "A compact phone-first view — pick a crop and see today's actions, check the forecast, or send feedback.",
+      "navLabel": "Mobile dashboard sections"
     },
     "readAloud": {
       "play": "Read aloud",

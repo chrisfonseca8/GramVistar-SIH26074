@@ -1,9 +1,48 @@
+import { isFiniteNumber } from "@/lib/calculations/result";
+
 /**
  * Advisory generation prompt.
  * Version identifier lets later logs know which prompt produced a
  * given advisory.
  */
-export const ADVISORY_PROMPT_VERSION = "advisory-v4";
+export const ADVISORY_PROMPT_VERSION = "advisory-v5";
+
+function numericRange(values) {
+  const clean = values.filter(isFiniteNumber);
+  if (clean.length === 0) return null;
+  return {
+    min: Math.min(...clean),
+    max: Math.max(...clean),
+    avg: Math.round((clean.reduce((sum, v) => sum + v, 0) / clean.length) * 10) / 10,
+  };
+}
+
+/**
+ * Collapses the full hourly forecast array (up to 7 days × 24 hours) down
+ * to min/max/avg per variable — the local model only needs these
+ * decision-relevant numbers, not every raw hourly reading. This also keeps
+ * the prompt within a small local model's context window: the raw array
+ * was measured at ~7,800 tokens for a 7-day window, which a CPU-bound
+ * `llama3.2` either silently truncates or takes an impractically long time
+ * to process, producing a degenerate response either way. The underlying
+ * `advisoryInput.forecast` array itself is untouched — this summarizing
+ * happens only for what gets sent to the model.
+ * @param {{ temperatureC: number|null, rainProbabilityPct: number|null, humidityPct: number|null, soilMoisture: number|null }[]} forecast
+ */
+function summarizeForecast(forecast) {
+  return {
+    hourCount: forecast.length,
+    temperatureC: numericRange(forecast.map((r) => r.temperatureC)),
+    rainProbabilityPct: numericRange(forecast.map((r) => r.rainProbabilityPct)),
+    humidityPct: numericRange(forecast.map((r) => r.humidityPct)),
+    soilMoisture: numericRange(forecast.map((r) => r.soilMoisture)),
+  };
+}
+
+/** @param {{ value: number|null }[]} downscaledTemperature */
+function summarizeDownscaledTemperature(downscaledTemperature) {
+  return numericRange(downscaledTemperature.map((r) => r.value));
+}
 
 const AUDIENCE_BRIEF = {
   farmer: `You are drafting for a FARMER audience, for one specific crop. Keep
@@ -66,11 +105,14 @@ export function buildAdvisoryUserPrompt(advisoryInput) {
     `Forecast uncertainty level: ${advisoryInput.uncertainty.level}`,
     `Active alerts: ${advisoryInput.relevantAlerts.length > 0 ? JSON.stringify(advisoryInput.relevantAlerts) : "none"}`,
     "",
-    "Full structured data (forecast hours, downscaled temperatures):",
-    JSON.stringify({
-      forecast: advisoryInput.forecast,
-      downscaledValues: advisoryInput.downscaledValues,
-    }),
+    "Forecast summary (min/max/avg over the date range above, from the hourly forecast):",
+    JSON.stringify(summarizeForecast(advisoryInput.forecast)),
+    "Downscaled temperature summary (°C):",
+    JSON.stringify(
+      summarizeDownscaledTemperature(
+        advisoryInput.downscaledValues.temperatureC,
+      ),
+    ),
     "",
     "Draft the advisory now, following the system prompt's JSON schema exactly.",
   ].join("\n");

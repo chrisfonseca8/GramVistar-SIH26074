@@ -9,21 +9,21 @@
 export function MetricTile({ label, value, bordered = false }) {
   if (bordered) {
     return (
-      <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
-        <dt className="text-xs uppercase tracking-wide text-foreground/40">
+      <div className="rounded-lg border border-border bg-surface p-4">
+        <dt className="text-xs font-medium tracking-wider text-text-muted uppercase">
           {label}
         </dt>
-        <dd className="mt-1 text-lg font-semibold">{value}</dd>
+        <dd className="mt-1 text-lg font-semibold text-foreground">{value}</dd>
       </div>
     );
   }
 
   return (
     <div>
-      <dt className="text-xs uppercase tracking-wide text-foreground/40">
+      <dt className="text-xs font-medium tracking-wider text-text-muted uppercase">
         {label}
       </dt>
-      <dd className="font-medium text-foreground">{value}</dd>
+      <dd className="text-lg font-semibold text-foreground">{value}</dd>
     </div>
   );
 }

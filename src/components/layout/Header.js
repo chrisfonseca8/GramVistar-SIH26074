@@ -14,11 +14,11 @@ export function Header({ portalTitle, onToggleMobileNav }) {
   const { t } = useTranslation();
 
   return (
-    <header className="flex items-center gap-3 border-b border-border bg-surface px-4 py-3">
+    <header className="flex items-center gap-3 bg-nav-background px-4 py-3 text-nav-foreground">
       <button
         type="button"
         onClick={onToggleMobileNav}
-        className="rounded-md border border-border p-2 text-sm sm:hidden"
+        className="rounded-md border border-white/30 p-2 text-sm text-nav-foreground sm:hidden"
         aria-label={t("common.toggleNav")}
       >
         <svg
@@ -37,12 +37,12 @@ export function Header({ portalTitle, onToggleMobileNav }) {
         </svg>
       </button>
 
-      <Link href="/" className="shrink-0 text-sm font-semibold">
+      <Link href="/" className="shrink-0 text-sm font-semibold text-nav-foreground">
         {t("common.appName")}
       </Link>
 
       {portalTitle ? (
-        <span className="hidden text-sm text-foreground/50 sm:inline">
+        <span className="hidden text-sm text-nav-foreground sm:inline">
           / {portalTitle}
         </span>
       ) : null}

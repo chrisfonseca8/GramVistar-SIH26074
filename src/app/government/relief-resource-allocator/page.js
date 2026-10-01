@@ -111,8 +111,8 @@ export default function ReliefResourceAllocatorPage() {
         </p>
         <p className="mt-2 inline-block rounded-full border border-border px-3 py-1 text-xs text-foreground/60 ">
           {isMockMode()
-            ? "Mock mode (deterministic, no API key)"
-            : "Live Gemini mode"}
+            ? "Mock mode (deterministic, no live generation)"
+            : "Live generation mode"}
         </p>
       </div>
 

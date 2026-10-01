@@ -8,7 +8,7 @@
 export function Card({ title, description, className = "", children }) {
   return (
     <section
-      className={`rounded-lg border border-border bg-surface p-5 shadow-sm ${className}`}
+      className={`rounded-lg border border-border bg-surface p-5 ${className}`}
     >
       {title ? <h2 className="text-sm font-semibold">{title}</h2> : null}
       {description ? (

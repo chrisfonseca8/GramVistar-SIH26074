@@ -28,15 +28,15 @@ export function PortalShell({ portalTitle, navItems, children }) {
   const online = useOnlineStatus();
 
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="print-hide">
+    <div className="flex h-screen flex-1 flex-col overflow-hidden print:h-auto print:overflow-visible">
+      <div className="print-hide shrink-0">
         <Header
           portalTitle={portalTitle}
           onToggleMobileNav={() => setMobileNavOpen(true)}
         />
       </div>
       {!online ? (
-        <div className="print-hide px-4 pt-3">
+        <div className="print-hide shrink-0 px-4 pt-3">
           <Alert tone="warning">{t("common.offline")}</Alert>
         </div>
       ) : null}
@@ -48,11 +48,11 @@ export function PortalShell({ portalTitle, navItems, children }) {
         />
       </div>
 
-      <div className="flex flex-1">
-        <div className="print-hide">
+      <div className="flex flex-1 overflow-hidden print:overflow-visible">
+        <div className="print-hide flex">
           <Sidebar navItems={navItems} />
         </div>
-        <div className="flex flex-1 flex-col">
+        <div className="flex flex-1 flex-col overflow-y-auto print:overflow-visible">
           <div className="print-hide">
             <Breadcrumbs />
           </div>

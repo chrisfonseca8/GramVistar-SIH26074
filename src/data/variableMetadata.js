@@ -126,15 +126,6 @@ export const FORECAST_VARIABLES = [
     source: "panchayat_expanded_agro_forecast.csv",
   },
   {
-    key: "soilDeficit",
-    label: "Soil Moisture Deficit",
-    unit: "m³/m³",
-    description:
-      "Hourly forecast soil moisture deficit, provided directly by the source. Panchayat forecast only.",
-    provenance: "forecast",
-    source: "panchayat_expanded_agro_forecast.csv",
-  },
-  {
     key: "sprayFavorable",
     label: "Spray Favorable",
     unit: "boolean",
@@ -272,14 +263,6 @@ export const DERIVED_VARIABLES = [
     source: "src/lib/calculations/spi.js",
   },
   {
-    key: "soilMoistureDeficit",
-    label: "Soil Moisture Deficit",
-    unit: "m³/m³",
-    description: "Field capacity minus current soil moisture.",
-    provenance: "derived",
-    source: "src/lib/calculations/soilMoistureDeficit.js",
-  },
-  {
     key: "heatIndexC",
     label: "Heat Index",
     unit: "°C",
@@ -308,7 +291,7 @@ export const DERIVED_VARIABLES = [
     key: "irrigationWindowRecommended",
     label: "Irrigation Window",
     unit: "irrigate/reasons",
-    description: "Soil deficit vs. rain-likelihood threshold check.",
+    description: "Soil moisture vs. rain-likelihood threshold check.",
     provenance: "derived",
     source: "src/lib/calculations/irrigationWindow.js",
   },

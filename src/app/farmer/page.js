@@ -172,8 +172,8 @@ export default function FarmerPortalPage() {
   const fiveDayForecast = selectFiveDayForecast(data, selectedPanchayat);
   const alerts = selectPanchayatAlerts(data, selectedPanchayat);
   const rainByDaypart = selectTodayRainByDaypart(data, selectedPanchayat);
-  const currentSoilDeficit =
-    selectForecastPanchayat(data, selectedPanchayat)[0]?.soilDeficit ?? null;
+  const currentSoilMoisture =
+    selectForecastPanchayat(data, selectedPanchayat)[0]?.soilMoisture ?? null;
   const cropThresholds = selectedCrop
     ? selectEffectiveThresholdForCrop(thresholdOverrides, selectedCrop)
     : null;
@@ -244,7 +244,7 @@ export default function FarmerPortalPage() {
 
           <StressBreakdownChart
             current={todaysWeather}
-            soilMoistureDeficit={currentSoilDeficit}
+            soilMoisture={currentSoilMoisture}
           />
 
           <FiveDayForecast days={fiveDayForecast} />

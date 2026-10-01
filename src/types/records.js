@@ -41,7 +41,6 @@
  * @property {number|null} precipitationMm
  * @property {number|null} rainProbabilityPct
  * @property {number|null} soilMoisture m³/m³
- * @property {number|null} soilDeficit m³/m³
  * @property {boolean|null} sprayFavorable
  *
  * @typedef {Object} SoilRecord

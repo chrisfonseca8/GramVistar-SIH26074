@@ -1,15 +1,17 @@
 import { isMockMode } from "@/lib/advisory/config";
 import { generateMockAdvisory } from "@/lib/advisory/mockAdvisory";
 import { generateMockAuthorityAdvisory } from "@/lib/advisory/mockAuthorityAdvisory";
-import { callGeminiForAdvisory } from "@/lib/advisory/geminiClient";
+import { callAdvisoryGenerator } from "@/lib/advisory/ollamaClient";
 import { ADVISORY_PROMPT_VERSION } from "@/lib/prompts/advisoryPrompt";
 
 /**
  * The single abstraction every caller uses to draft an advisory —
- * routes to the deterministic mock generator or live
- * Gemini depending on `isMockMode()`. Returns the same shape either way
- * so callers (the parse/validate step) don't need to branch on
- * source, and **never throws** regardless of source.
+ * routes to the deterministic mock generator or the live local
+ * generation service depending on `isMockMode()`. Returns the same shape
+ * either way so callers (the parse/validate step) don't need to branch on
+ * source, and **never throws** regardless of source. The specific model
+ * behind the "live" path is an internal implementation detail — never
+ * named in the UI.
  *
  * `audience` picks which of the two advisories this call drafts, and
  * which shape `advisoryInput` must already be in:
@@ -29,7 +31,7 @@ import { ADVISORY_PROMPT_VERSION } from "@/lib/prompts/advisoryPrompt";
  * @param {"farmer"|"authority"} audience
  * @param {{ onStreamChunk?: (text: string) => void }} [options]
  * @returns {Promise<{
- * source: "mock"| "gemini",
+ * source: "mock"| "ai",
  * ok: boolean,
  * rawText: string | null,
  * error: string | null,
@@ -55,9 +57,9 @@ export async function generateAdvisory(advisoryInput, audience, options = {}) {
     };
   }
 
-  const result = await callGeminiForAdvisory(advisoryInput, audience, options);
+  const result = await callAdvisoryGenerator(advisoryInput, audience, options);
   return {
-    source: "gemini",
+    source: "ai",
     ok: result.ok,
     rawText: result.ok ? result.rawText : null,
     error: result.ok ? null : result.error,

@@ -34,11 +34,11 @@ export function Breadcrumbs() {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="px-4 pt-3 text-xs text-foreground/50"
+      className="border-b border-border bg-white px-4 py-2 text-xs text-text-muted"
     >
       <ol className="flex flex-wrap items-center gap-1">
         <li>
-          <Link href="/" className="hover:text-foreground hover:underline">
+          <Link href="/" className="hover:text-primary hover:underline">
             {t("common.home")}
           </Link>
         </li>
@@ -46,11 +46,13 @@ export function Breadcrumbs() {
           <li key={crumb.href} className="flex items-center gap-1">
             <span aria-hidden="true">/</span>
             {crumb.isLast ? (
-              <span className="text-foreground/70">{crumb.label}</span>
+              <span className="font-medium text-foreground">
+                {crumb.label}
+              </span>
             ) : (
               <Link
                 href={crumb.href}
-                className="hover:text-foreground hover:underline"
+                className="hover:text-primary hover:underline"
               >
                 {crumb.label}
               </Link>

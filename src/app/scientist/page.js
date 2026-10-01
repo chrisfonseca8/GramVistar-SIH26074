@@ -80,7 +80,9 @@ export default function BlockOverviewPage() {
   const weekRainfallRange = summarizeRange(
     Object.values(weekRainfallByPanchayat),
   );
-  const soilDeficitRange = summarizeRange(comparison.map((c) => c.soilDeficit));
+  const soilMoistureRange = summarizeRange(
+    comparison.map((c) => c.soilMoisture),
+  );
 
   return (
     <main className="flex-1 space-y-8 px-6 py-8">
@@ -128,15 +130,15 @@ export default function BlockOverviewPage() {
           }
         />
         <SummaryCard
-          title="Soil Moisture Deficit"
+          title="Soil Moisture"
           primary={
-            soilDeficitRange
-              ? formatSoilMoisturePercent(soilDeficitRange.mean)
+            soilMoistureRange
+              ? formatSoilMoisturePercent(soilMoistureRange.mean)
               : "—"
           }
           detail={
-            soilDeficitRange
-              ? `${formatSoilMoisturePercent(soilDeficitRange.min)} – ${formatSoilMoisturePercent(soilDeficitRange.max)} across panchayats`
+            soilMoistureRange
+              ? `${formatSoilMoisturePercent(soilMoistureRange.min)} – ${formatSoilMoisturePercent(soilMoistureRange.max)} across panchayats`
               : "No data"
           }
         />

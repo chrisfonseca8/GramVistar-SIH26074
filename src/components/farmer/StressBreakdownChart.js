@@ -6,12 +6,12 @@ import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 /**
- * Current relative humidity, soil moisture deficit and wind speed as one
+ * Current relative humidity, soil moisture and wind speed as one
  * bar chart, each on its own natural scale (%, m³/m³, km/h) called out
  * per bar — read straight from the current forecast hour, nothing
  * simulated.
  */
-export function StressBreakdownChart({ current, soilMoistureDeficit }) {
+export function StressBreakdownChart({ current, soilMoisture }) {
   const { t } = useTranslation();
 
   const bars = [
@@ -22,9 +22,9 @@ export function StressBreakdownChart({ current, soilMoistureDeficit }) {
       color: "#ef4444",
     },
     {
-      label: t("farmer.stressBreakdown.soilDeficit"),
-      value: soilMoistureDeficit != null ? soilMoistureDeficit * 100 : null,
-      text: soilMoistureDeficit != null ? soilMoistureDeficit.toFixed(3) : "—",
+      label: t("farmer.stressBreakdown.soilMoisture"),
+      value: soilMoisture != null ? soilMoisture * 100 : null,
+      text: soilMoisture != null ? soilMoisture.toFixed(3) : "—",
       color: "#0f766e",
     },
     {

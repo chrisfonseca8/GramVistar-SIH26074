@@ -23,7 +23,6 @@ const PANCHAYAT_COLUMNS = [
   "Precipitation_mm",
   "Rain_Probability_Pct",
   "Soil_Moisture",
-  "Soil_Deficit",
   "Spray_Favorable",
 ];
 
@@ -81,7 +80,6 @@ export function normalizeForecastPanchayatRows(rawRows) {
       precipitationMm: parseNumber(row.Precipitation_mm),
       rainProbabilityPct: parseNumber(row.Rain_Probability_Pct),
       soilMoisture: parseNumber(row.Soil_Moisture),
-      soilDeficit: parseNumber(row.Soil_Deficit),
       sprayFavorable: parseBoolean(row.Spray_Favorable),
     };
   });

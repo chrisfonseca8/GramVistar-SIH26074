@@ -14,17 +14,15 @@ export function Sidebar({ navItems }) {
   const { t } = useTranslation();
 
   return (
-    <nav className="hidden w-56 shrink-0 flex-col gap-1 border-r border-border p-4 sm:flex">
+    <nav className="hidden w-56 shrink-0 flex-col gap-1 overflow-y-auto bg-nav-background p-4 sm:flex">
       {navItems.map((item) => {
         const active = pathname === item.href;
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={`rounded-md px-3 py-2 text-sm transition ${
-              active
-                ? "bg-primary text-primary-foreground"
-                : "text-foreground/70 hover:bg-muted "
+            className={`rounded-md px-3 py-2 text-sm font-medium text-nav-foreground transition ${
+              active ? "bg-white/10" : "hover:bg-white/5"
             }`}
           >
             {t(item.labelKey, item.label)}

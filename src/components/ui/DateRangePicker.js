@@ -10,7 +10,7 @@ export function DateRangePicker({ from, to, onChange, label }) {
   return (
     <div className="flex flex-col gap-1 text-sm">
       {label ? (
-        <span className="text-xs uppercase tracking-wide text-foreground/40">
+        <span className="text-xs font-medium tracking-wider text-text-muted uppercase">
           {label}
         </span>
       ) : null}

@@ -23,14 +23,16 @@ export function MobileNav({ navItems, open, onClose }) {
         onClick={onClose}
         className="absolute inset-0 bg-black/30"
       />
-      <nav className="absolute inset-y-0 left-0 flex w-64 flex-col gap-4 bg-surface p-4 shadow-lg">
+      <nav className="absolute inset-y-0 left-0 flex w-64 flex-col gap-4 bg-nav-background p-4 text-nav-foreground shadow-lg">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold">{t("common.menu")}</span>
+          <span className="text-sm font-semibold text-nav-foreground">
+            {t("common.menu")}
+          </span>
           <button
             type="button"
             onClick={onClose}
             aria-label={t("common.close")}
-            className="rounded-md border border-border p-1.5 "
+            className="rounded-md border border-white/30 p-1.5 text-nav-foreground"
           >
             <svg
               width="14"
@@ -59,10 +61,8 @@ export function MobileNav({ navItems, open, onClose }) {
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
-                className={`rounded-md px-3 py-2 text-sm transition ${
-                  active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground/70 hover:bg-muted "
+                className={`rounded-md px-3 py-2 text-sm font-medium text-nav-foreground transition ${
+                  active ? "bg-white/10" : "hover:bg-white/5"
                 }`}
               >
                 {t(item.labelKey, item.label)}

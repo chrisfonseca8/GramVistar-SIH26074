@@ -123,10 +123,10 @@ export default function LoginPage() {
   const canProceed = Boolean(resolvedRole());
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-16">
-      <div className="w-full max-w-2xl rounded-2xl border border-border bg-surface p-8 shadow-sm">
+    <main className="flex flex-1 flex-col items-center justify-center gap-6 bg-[linear-gradient(135deg,#a7f3d0_0%,#ecfdf5_45%,#86efac_100%)] px-6 py-16">
+      <div className="w-full max-w-2xl rounded-2xl border border-[#bbf7d0] bg-white p-8 shadow-[0_20px_50px_-20px_rgba(21,128,61,0.35)]">
         <div className="flex flex-col items-center gap-2 text-center">
-          <span className="rounded-full border border-border px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-foreground/50 ">
+          <span className="rounded-full bg-[#dcfce7] px-3 py-1 text-[10px] font-semibold tracking-widest text-[#15803d] uppercase">
             {t("login.gatewayBadge")}
           </span>
           <h1 className="mt-2 text-xl font-semibold">{t("login.heading")}</h1>
@@ -151,7 +151,7 @@ export default function LoginPage() {
                   ? "/select-region"
                   : defaultPathForRole(role)
               }
-              className="rounded-full bg-primary px-4 py-2 text-center text-sm font-medium text-primary-foreground transition hover:opacity-90"
+              className="rounded-full bg-linear-to-r from-[#34d399] to-[#15803d] px-4 py-2 text-center text-sm font-medium text-white transition hover:opacity-90"
             >
               {t("login.continue")}
             </Link>
@@ -183,7 +183,7 @@ export default function LoginPage() {
                     aria-pressed={isActive}
                     className={`flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition ${
                       isActive
-                        ? "border-foreground bg-primary/5"
+                        ? "border-[#15803d] bg-[#15803d]/5"
                         : "border-border hover:border-border-hover "
                     }`}
                   >
@@ -208,7 +208,7 @@ export default function LoginPage() {
               type="button"
               onClick={handleProceed}
               disabled={!canProceed}
-              className="mt-6 w-full rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+              className="mt-6 w-full rounded-full bg-linear-to-r from-[#34d399] to-[#15803d] px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {t("login.proceed")}
             </button>

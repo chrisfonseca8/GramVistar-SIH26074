@@ -61,7 +61,7 @@ export function FarmerOtpLogin({ onVerified, onCancel }) {
         <Button
           type="submit"
           variant="primary"
-          className="rounded-full px-4 py-2"
+          className="rounded-full bg-linear-to-r! from-[#34d399]! to-[#15803d]! px-4 py-2 text-white!"
         >
           {t("farmer.otp.sendCode")}
         </Button>
@@ -98,7 +98,7 @@ export function FarmerOtpLogin({ onVerified, onCancel }) {
       <Button
         type="submit"
         variant="primary"
-        className="rounded-full px-4 py-2"
+        className="rounded-full bg-linear-to-r! from-[#34d399]! to-[#15803d]! px-4 py-2 text-white!"
       >
         {t("farmer.otp.verify")}
       </Button>

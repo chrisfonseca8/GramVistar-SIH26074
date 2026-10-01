@@ -1,39 +1,39 @@
 import { available, unavailable, isFiniteNumber } from "./result";
 
 /**
- * Whether irrigation is recommended today: soil is dry enough (deficit
- * above threshold) and rain unlikely enough that it won't do the job
- * naturally. Thresholds are configurable defaults, not crop-specific
- * standards.
+ * Whether irrigation is recommended today: soil is dry enough (volumetric
+ * soil moisture at/below threshold) and rain unlikely enough that it won't
+ * do the job naturally. Thresholds are configurable defaults, not
+ * crop-specific standards.
  *
  * @param {{
- * soilMoistureDeficit: number|null,
+ * soilMoisture: number|null,
  * rainProbabilityPct: number|null,
- * deficitThreshold?: number,
+ * moistureThreshold?: number,
  * rainProbabilityThreshold?: number,
- * }} input soilMoistureDeficit and deficitThreshold in m³/m³
+ * }} input soilMoisture and moistureThreshold in m³/m³
  * @returns {import("./result").CalcResult} value is `{ irrigate: boolean, reasons: string[] }`
  */
 export function computeIrrigationWindow({
-  soilMoistureDeficit,
+  soilMoisture,
   rainProbabilityPct,
-  deficitThreshold = 0.05,
+  moistureThreshold = 0.26,
   rainProbabilityThreshold = 50,
 }) {
-  if (!isFiniteNumber(soilMoistureDeficit)) {
-    return unavailable("irrigate/reasons", "missing soilMoistureDeficit");
+  if (!isFiniteNumber(soilMoisture)) {
+    return unavailable("irrigate/reasons", "missing soilMoisture");
   }
   if (!isFiniteNumber(rainProbabilityPct)) {
     return unavailable("irrigate/reasons", "missing rainProbabilityPct");
   }
 
   const reasons = [];
-  const isDry = soilMoistureDeficit >= deficitThreshold;
+  const isDry = soilMoisture <= moistureThreshold;
   const rainLikely = rainProbabilityPct >= rainProbabilityThreshold;
 
   if (isDry)
     reasons.push(
-      `soil moisture deficit ${soilMoistureDeficit.toFixed(3)} m³/m³ at/above ${deficitThreshold} m³/m³ threshold`,
+      `soil moisture ${soilMoisture.toFixed(3)} m³/m³ at/below ${moistureThreshold} m³/m³ threshold`,
     );
   if (rainLikely)
     reasons.push(

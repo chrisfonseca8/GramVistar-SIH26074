@@ -170,8 +170,8 @@ export default function AdvisoryStudioPage() {
         </p>
         <p className="mt-2 inline-block rounded-full border border-border px-3 py-1 text-xs text-foreground/60 ">
           {isMockMode()
-            ? "Mock mode (deterministic, no API key)"
-            : "Live Gemini mode"}
+            ? "Mock mode (deterministic, no live generation)"
+            : "Live generation mode"}
         </p>
       </div>
 
@@ -277,8 +277,8 @@ export default function AdvisoryStudioPage() {
         title="Structured advisory input"
       >
         <p className="mb-3 text-xs text-foreground/50">
-          This is the exact payload sent to Gemini/mock — no farmer-identifying
-          data, panchayat-level data only.
+          This is the exact payload sent to the generator/mock — no
+          farmer-identifying data, panchayat-level data only.
         </p>
         <pre className="max-h-[60vh] overflow-auto rounded-md bg-muted p-3 text-xs ">
           {JSON.stringify(previewInput, null, 2)}

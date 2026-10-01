@@ -35,6 +35,7 @@
     "scientist.advisoryStudio": "सलाह स्टूडियो",
     "scientist.feedbackInbox": "प्रतिक्रिया इनबॉक्स",
     "farmer.today": "आज",
+    "farmer.mobileDashboard": "मोबाइल डैशबोर्ड",
     "farmer.feedback": "प्रतिक्रिया",
     "government.overview": "अवलोकन",
     "government.climateOverview": "जलवायु अवलोकन",
@@ -137,7 +138,7 @@
       "title": "वायुमंडलीय एवं मृदा तनाव",
       "unavailable": "वर्तमान घंटे का डेटा उपलब्ध नहीं है",
       "humidity": "नमी (%)",
-      "soilDeficit": "मिट्टी की कमी (m³/m³ ×100)",
+      "soilMoisture": "मिट्टी की नमी (m³/m³ ×100)",
       "wind": "हवा (किमी/घंटा)"
     },
     "alertsDetail": {
@@ -184,10 +185,6 @@
       "afternoon": "दोपहर",
       "evening": "शाम",
       "night": "रात"
-    },
-    "soilMoisture": {
-      "title": "मिट्टी की नमी",
-      "description": "अभी आपकी मिट्टी कितनी सूखी है। हरा = ठीक है, पीला = सूखने लगी है, लाल = जल्द पानी चाहिए।"
     },
     "cropOutlook": {
       "title": "तापमान बनाम {{crop}}",
@@ -288,6 +285,11 @@
       "yield": {
         "expected": "अपेक्षित उपज (क्विंटल/एकड़)"
       }
+    },
+    "mobileDashboard": {
+      "title": "मोबाइल डैशबोर्ड",
+      "description": "एक संक्षिप्त फोन-फर्स्ट दृश्य — फसल चुनें और आज की कार्रवाइयाँ देखें, पूर्वानुमान जाँचें, या प्रतिक्रिया भेजें।",
+      "navLabel": "मोबाइल डैशबोर्ड अनुभाग"
     },
     "readAloud": {
       "play": "ज़ोर से पढ़ें",

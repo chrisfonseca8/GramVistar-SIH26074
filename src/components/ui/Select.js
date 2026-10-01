@@ -23,7 +23,7 @@ export function Select({ label, value, onChange, options, className = "" }) {
 
   return (
     <label className="flex flex-col gap-1 text-sm">
-      <span className="text-xs uppercase tracking-wide text-foreground/40">
+      <span className="text-xs font-medium tracking-wider text-text-muted uppercase">
         {label}
       </span>
       {select}

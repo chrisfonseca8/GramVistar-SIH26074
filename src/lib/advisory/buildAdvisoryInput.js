@@ -21,7 +21,7 @@ function withinRange(date, start, end) {
 
 /**
  * Assembles the structured advisory input object — the
- * payload the Gemini/mock generation step will consume.
+ * payload the generation/mock step will consume.
  * Contains only panchayat/crop/aggregate-weather/thresholds, never
  * farmer PII — there is no per-farmer data anywhere in
  * this app yet, so that's true by construction, not extra filtering here.

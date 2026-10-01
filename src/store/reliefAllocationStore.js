@@ -7,7 +7,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
  * advisoryId: string,
  * panchayat: string,
  * generatedAt: string,
- * source: "mock"|"gemini",
+ * source: "mock"|"ai",
  * promptVersion: string,
  * content: { summary: string, resources: { title: string, description: string, priority: string }[], confidence: string },
  * }} ReliefAllocationEntry
@@ -37,7 +37,7 @@ export const useReliefAllocationStore = create(
       },
 
       /**
-       * @param {{ advisoryId: string, panchayat: string, source: "mock"|"gemini", promptVersion: string, content: object }} params
+       * @param {{ advisoryId: string, panchayat: string, source: "mock"|"ai", promptVersion: string, content: object }} params
        * @returns {string} the new entry's id
        */
       addEntry({ advisoryId, panchayat, source, promptVersion, content }) {

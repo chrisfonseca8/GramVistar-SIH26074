@@ -83,7 +83,7 @@ export function selectTodaysActionCard(data, panchayat, cropStage = null) {
   if (!current) return null;
 
   const forecast = {
-    soilMoistureDeficit: current.soilDeficit,
+    soilMoisture: current.soilMoisture,
     rainProbabilityPct: current.rainProbabilityPct,
     windSpeedKmh: current.windSpeedKmh,
     temperatureC: current.temperatureC,
@@ -127,7 +127,7 @@ export function selectWeeklyOperationsOutlook(data, panchayat) {
           tempC: representative.temperatureC,
         }),
         irrigate: computeIrrigationWindow({
-          soilMoistureDeficit: representative.soilDeficit,
+          soilMoisture: representative.soilMoisture,
           rainProbabilityPct: representative.rainProbabilityPct,
         }),
         frostRiskLevel: frost.available

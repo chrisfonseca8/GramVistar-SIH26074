@@ -23,7 +23,7 @@ export function Tabs({ tabs, active, onChange }) {
 
   return (
     <div
-      className="flex gap-1 overflow-x-auto border-b border-border "
+      className="flex flex-wrap gap-1.5 overflow-x-auto rounded-full bg-surface-muted p-1"
       role="tablist"
     >
       {normalized.map(({ key, label }) => (
@@ -33,10 +33,10 @@ export function Tabs({ tabs, active, onChange }) {
           role="tab"
           aria-selected={active === key}
           onClick={() => onChange(key)}
-          className={`shrink-0 px-4 py-2 text-sm font-medium transition ${
+          className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition ${
             active === key
-              ? "border-b-2 border-primary text-primary"
-              : "text-foreground/50 hover:text-foreground"
+              ? "bg-primary text-primary-foreground"
+              : "text-foreground/60 hover:bg-white hover:text-foreground"
           }`}
         >
           {label}

@@ -18,8 +18,8 @@ function average(values) {
  * input, reusing only the numbers already in it — no randomness, no
  * invented values. Same input always produces the same output.
  *
- * This exists so the app works fully without a Gemini API key
- * and so the review/edit/publish workflow has
+ * This exists so the app works fully without the local generation
+ * service running and so the review/edit/publish workflow has
  * deterministic, testable content to work with.
  *
  * @param {object} advisoryInput the output of `buildAdvisoryInput()`

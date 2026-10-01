@@ -1,57 +1,36 @@
 @import "tailwindcss";
 
 /*
- * Light theme by default: a warm, subtly-tinted page background with
- * pure-white "floating cards" (white surface, slate border, soft
- * shadow). Dark mode (below) follows the OS/browser preference and uses
- * a moderate charcoal, not a harsh near-black, so it stays easy on the
- * eyes rather than high-contrast-for-its-own-sake.
+ * "GramVarsha" meteorological-dashboard theme: a flat, always-light
+ * "Blue & White" palette — pure-white/near-white canvas, deep-navy
+ * chrome (header/sidebar), vibrant-blue accent for active/selected
+ * state, and crisp 1px light-gray borders instead of drop shadows.
+ * Intentionally not OS-dark-mode-aware: the app stays light regardless
+ * of browser/OS preference, per the target design.
  */
 :root {
-  color-scheme: light dark;
-  --background: #f8fafc;
-  --background-gradient: linear-gradient(
-    135deg,
-    rgba(236, 253, 245, 0.3),
-    #f8fafc
-  );
-  --foreground: #607d8b;
-  --text-muted: #90a4ae;
+  color-scheme: light;
+  --background: #f8f9fa;
+  --background-gradient: none;
+  --foreground: #1f2937;
+  --text-muted: #6b7280;
   --surface: #ffffff;
-  --surface-muted: #f1f5f9;
-  --border: #e2e8f0;
-  --border-hover: #cbd5e1;
-  --primary: #81c784;
-  --primary-hover: #66bb6a;
-  /* Dark text on the pastel primary/accent fills — both are light,
-     high-luminance colors, so white text on top of them reads poorly. */
-  --primary-foreground: #143d1b;
-  --muted: #f1f5f9;
-  --accent: #81d4fa;
-  --accent-foreground: #0d3a52;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1c2224;
-    --background-gradient: linear-gradient(
-      135deg,
-      rgba(129, 199, 132, 0.06),
-      #1c2224
-    );
-    --foreground: #dbe4e6;
-    --text-muted: #92a3a6;
-    --surface: #262e30;
-    --surface-muted: #2c3538;
-    --border: #3a4548;
-    --border-hover: #4c5a5e;
-    --primary: #8fd192;
-    --primary-hover: #a3dba5;
-    --primary-foreground: #0f2913;
-    --muted: #2c3538;
-    --accent: #8fd8fb;
-    --accent-foreground: #0a2c3e;
-  }
+  --surface-muted: #f3f4f6;
+  --border: #e5e7eb;
+  --border-hover: #d1d5db;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-foreground: #ffffff;
+  --muted: #f3f4f6;
+  --accent: #2563eb;
+  --accent-foreground: #ffffff;
+  /* Deep forest-green chrome for the top header and portal
+     sidebar/mobile nav — ties the dashboard chrome back to the
+     GramVistar brand green instead of a generic navy, while still
+     reading as crisp and professional against the white content area. */
+  --nav-background: #14532d;
+  --nav-foreground: #ffffff;
+  --nav-muted: #86efac;
 }
 
 @theme inline {
@@ -68,12 +47,15 @@
   --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-nav-background: var(--nav-background);
+  --color-nav-foreground: var(--nav-foreground);
+  --color-nav-muted: var(--nav-muted);
   --font-sans: var(--font-inter);
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
 body {
-  background: var(--background-gradient), var(--background);
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-inter), sans-serif;
 }

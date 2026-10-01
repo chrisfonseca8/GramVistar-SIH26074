@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(awk -F, 'NR==1{for\\(i=1;i<=NF;i++\\){if\\($i==\"Soil_Moisture\"\\)sm=i; if\\($i==\"Soil_Deficit\"\\)sd=i} next} {print $sm, $sd}' data/panchayat_expanded_agro_forecast.csv)",
+      "Bash(awk -F, 'NR==1{for\\(i=1;i<=NF;i++\\){if\\($i==\"Soil_Moisture\"\\)sm=i} next} {print $sm}' data/panchayat_expanded_agro_forecast.csv)",
+      "Bash(awk '{sum+=$1; n++; if\\($1<min||n==1\\)min=$1; if\\($1>max\\)max=$1} END{print \"min=\"min, \"max=\"max, \"mean=\"sum/n, \"n=\"n}')",
+      "Bash(npx vitest *)",
+      "Bash(npm uninstall *)",
+      "Bash(rm -f /tmp/test_ollama.mjs)",
+      "Bash(node /tmp/test_full.mjs)",
+      "Bash(node test_full_tmp.mjs)",
+      "Bash(node --experimental-loader ./alias-loader.mjs test_fixed.mjs)",
+      "Bash(rm -f package-lock.json)",
+      "Bash(npm install *)"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
+    ]
+  }
+}

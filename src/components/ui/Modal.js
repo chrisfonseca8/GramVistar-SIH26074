@@ -12,7 +12,7 @@ export function Modal({ open, onClose, title, children }) {
         onClick={onClose}
         className="absolute inset-0 bg-black/50"
       />
-      <div className="relative z-10 max-h-[85vh] w-full max-w-2xl overflow-auto rounded-lg bg-surface p-6 shadow-xl">
+      <div className="relative z-10 max-h-[85vh] w-full max-w-2xl overflow-auto rounded-lg border border-border bg-surface p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-sm font-semibold">{title}</h2>
           <button

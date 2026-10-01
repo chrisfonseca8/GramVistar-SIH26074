@@ -130,7 +130,7 @@ export default function ModelDiagnosticsPage() {
         selectedPanchayat={selectedPanchayat}
       />
 
-      <SoilMoistureDeficitGaugeSection
+      <SoilMoistureGaugeSection
         data={data}
         selectedPanchayat={selectedPanchayat}
       />
@@ -592,13 +592,13 @@ function RainfallProbabilitySection({ data, selectedPanchayat }) {
   );
 }
 
-function SoilMoistureDeficitGaugeSection({ data, selectedPanchayat }) {
+function SoilMoistureGaugeSection({ data, selectedPanchayat }) {
   if (!selectedPanchayat) {
     return (
-      <Card title="Plot 9 — Soil Moisture Deficit Gauge">
+      <Card title="Plot 9 — Soil Moisture Gauge">
         <EmptyState
           title="Select a panchayat to see the gauge"
-          description="Only the panchayat-level forecast source provides Soil_Deficit; the block forecast does not."
+          description="Only the panchayat-level forecast source provides Soil_Moisture at this granularity; the block forecast does not."
         />
       </Card>
     );
@@ -609,7 +609,7 @@ function SoilMoistureDeficitGaugeSection({ data, selectedPanchayat }) {
 
   if (!current) {
     return (
-      <Card title="Plot 9 — Soil Moisture Deficit Gauge">
+      <Card title="Plot 9 — Soil Moisture Gauge">
         <EmptyState title="No forecast data available" />
       </Card>
     );
@@ -617,20 +617,20 @@ function SoilMoistureDeficitGaugeSection({ data, selectedPanchayat }) {
 
   return (
     <Card
-      title="Plot 9 — Soil Moisture Deficit Gauge"
-      description={`Current soil moisture deficit, ${selectedPanchayat}, at ${formatHourLabel(current.date)}. Zone boundaries (0.03 / 0.06 m³/m³) are illustrative defaults, not an authoritative agronomic standard — see the irrigation decision engine for the actual recommendation logic.`}
+      title="Plot 9 — Soil Moisture Gauge"
+      description={`Current volumetric soil moisture, ${selectedPanchayat}, at ${formatHourLabel(current.date)}. Zone boundaries (0.24 / 0.26 m³/m³) are illustrative defaults, not an authoritative agronomic standard — see the irrigation decision engine for the actual recommendation logic.`}
     >
       <Gauge
-        value={current.soilDeficit}
+        value={current.soilMoisture}
         min={0}
-        max={0.1}
+        max={0.4}
         zones={[
-          { to: 0.03, color: RISK_COLORS.green },
-          { to: 0.06, color: RISK_COLORS.yellow },
-          { to: 0.1, color: RISK_COLORS.red },
+          { to: 0.24, color: RISK_COLORS.red },
+          { to: 0.26, color: RISK_COLORS.yellow },
+          { to: 0.4, color: RISK_COLORS.green },
         ]}
-        label="Soil moisture deficit"
-        valueLabel={formatNumber(current.soilDeficit, {
+        label="Soil moisture"
+        valueLabel={formatNumber(current.soilMoisture, {
           decimals: 3,
           suffix: "m³/m³",
         })}
@@ -643,7 +643,7 @@ function VulnerabilityRankingSection({ data }) {
   return (
     <Card
       title="Plot 11 — Panchayat Vulnerability Ranking"
-      description="Climate/soil exposure proxy — rainfall variability, soil water capacity, elevation range and soil moisture deficit. Excludes population/livelihoods, which don't exist anywhere in /data. Ranking is relative to these 5 panchayats only, not an absolute score."
+      description="Climate/soil exposure proxy — rainfall variability, soil water capacity, elevation range and soil moisture. Excludes population/livelihoods, which don't exist anywhere in /data. Ranking is relative to these 5 panchayats only, not an absolute score."
     >
       <VulnerabilityRankingChart data={data} />
     </Card>
@@ -667,7 +667,7 @@ function OperationsWindowMatrixSection({ data, selectedPanchayat }) {
       <Card title="Plot 12 — Farm Operations Window Matrix">
         <EmptyState
           title="Select a panchayat to see the operations matrix"
-          description="Spray and irrigation windows need wind speed, rain probability and soil deficit — only the panchayat-level forecast provides those."
+          description="Spray and irrigation windows need wind speed, rain probability and soil moisture — only the panchayat-level forecast provides those."
         />
       </Card>
     );
@@ -698,7 +698,7 @@ function OperationsWindowMatrixSection({ data, selectedPanchayat }) {
   );
   const irrigationResults = representatives.map((r) =>
     computeIrrigationWindow({
-      soilMoistureDeficit: r.soilDeficit,
+      soilMoisture: r.soilMoisture,
       rainProbabilityPct: r.rainProbabilityPct,
     }),
   );
@@ -1341,7 +1341,7 @@ function PanchayatComparisonSection({ data }) {
               <th className="py-2 pr-4">Temp</th>
               <th className="py-2 pr-4">Humidity</th>
               <th className="py-2 pr-4">Rain prob.</th>
-              <th className="py-2 pr-4">Soil deficit</th>
+              <th className="py-2 pr-4">Soil moisture</th>
               <th className="py-2 pr-4">Spray</th>
               <th className="py-2 pr-4">Irrigate</th>
               <th className="py-2">Vulnerability</th>
@@ -1367,7 +1367,7 @@ function PanchayatComparisonSection({ data }) {
                   })}
                 </td>
                 <td className="py-2 pr-4">
-                  {formatNumber(row.soilDeficit, {
+                  {formatNumber(row.soilMoisture, {
                     decimals: 3,
                     suffix: "m³/m³",
                   })}
